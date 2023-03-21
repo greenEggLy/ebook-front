@@ -1,0 +1,216 @@
+
+.book_view {
+    align-items: flex-start;
+    /*text-align: center;*/
+}
+
+.head {
+    align-items: flex-start;
+    flex-direction: column;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f5f5f5
+}
+
+.head .go_back {
+    border-radius: 4px;
+    border-width: 0;
+}
+
+.head .bread {
+    color: #646464;
+    font: 12px/40px "simsun";
+    height: 40px;
+    padding-bottom: 8px;
+    position: relative;
+    z-index: 10000;
+}
+
+.head .bread .bread_crumb {
+    color: #646464;
+    float: left;
+}
+
+
+.scan {
+    margin-top: 10px;
+    flex-direction: column;
+}
+
+.pic_display {
+    flex: 5;
+    width: 320px;
+    float: left;
+    margin-right: 60px;
+    padding: 0 60px 20px 0;
+}
+
+.info_display {
+    flex: 5;
+    /*width: 860px;*/
+    float: left;
+    font: 12px "Verdana", "Simsun"
+}
+
+.pic_display .big_pic {
+    display: block;
+    margin-right: 10px;
+    width: 320px;
+    height: 320px;
+    object-fit: contain;
+}
+
+.pic_display .pic_slider_box {
+    visibility: visible;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    left: 0;
+    width: 295px;
+    margin: 8px 5px 0;
+}
+
+.pic_display .pic_slider {
+    z-index: 1;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+    width: 885px;
+    /*left: -295px;*/
+}
+
+.pic_display .pic_slider .slider_item {
+    /*overflow: hidden;*/
+    float: left;
+    width: 56px;
+}
+
+.pic_display .pic_slider .slider_item .slider_img {
+    width: 56px;
+    height: 56px;
+    margin-left: 5px;
+    object-fit: contain;
+}
+
+.info_display .name_info {
+    padding: 0 6px 6px 0;
+    font-family: "Verdana", "Microsoft Yahei", serif;
+    border-bottom: 1px solid #f5f5f5
+}
+
+.info_display .name_info .title {
+    font-size: large;
+    margin-bottom: 2px;
+}
+
+.info_display .name_info .detail {
+    color: dimgray;
+}
+
+.info_display .publication {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    border: 0;
+}
+
+.info_display .publication .ti {
+    display: inline-block;
+    padding-right: 25px;
+}
+
+
+.info_display .price {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    border: 0;
+    color: maroon;
+    font: 24px "Fira Code"
+}
+
+.info_display .price .yuan {
+    font: 14px "Fira Code";
+}
+
+.buy_box {
+    padding: 30px 0 35px;
+}
+
+.buy_box .num {
+    height: auto;
+    align-content: center;
+}
+
+.buy_box .num .num_add {
+    /*margin-left: 2px;*/
+    border-width: 0;
+    border-color: #dcdcdc;
+    width: 25px;
+    border-radius: 4px;
+    /*background-position: -37px 0;*/
+    /*top: 0;*/
+}
+
+.buy_box .num .num_minus {
+    /*margin-left: 2px;*/
+    border-width: 0;
+    border-color: #dcdcdc;
+    width: 25px;
+    border-radius: 4px;
+}
+
+.buy_box .num input {
+    width: 38px !important;
+    height: 32px;
+    line-height: 32px;
+    border: 0;
+    background: #fff;
+    text-align: center;
+}
+
+.buy_box .buttons {
+
+    border-width: 0;
+    float: left;
+    width: 567px;
+}
+
+.buttons .to_cart {
+    height: 36px;
+    font: 16px/36px "Microsoft Yahei";
+    overflow: hidden;
+    margin: 0 0 3px 0;
+    float: left;
+    padding: 0 15px;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: chocolate;
+    text-decoration: none;
+    color: #ffffff;
+    *display: inline;
+    *zoom: 1;
+    *float: none;
+}
+
+.buttons .buy_now {
+    height: 36px;
+    font: 16px/36px "Microsoft Yahei";
+    overflow: hidden;
+    margin: 0 0 3px 10px;
+    float: left;
+    padding: 0 15px;
+    border-width: 0;
+    border-radius: 4px;
+    text-decoration: none;
+    background-color: maroon;
+    color: #ffffff;
+    *display: inline;
+    *zoom: 1;
+    *float: none;
+}
+
+
+
+
+

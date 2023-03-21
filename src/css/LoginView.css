@@ -1,0 +1,52 @@
+/*#root {*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    background-size: cover;*/
+/*    background-image: url("https://cdn.pixabay.com/photo/2021/05/08/03/01/book-6237461_1280.png");*/
+/*}*/
+
+/*.wrapper {*/
+/*}*/
+
+.login_wrapper {
+    word-wrap: break-word;
+    /*align-items: center;*/
+    /*align-content: center;*/
+    text-align: center;
+}
+
+.position-relative {
+    position: relative !important;
+}
+
+.position-relative .banner {
+    background-color: transparent;
+    border-bottom: 0;
+}
+
+.position-relative .banner .logo_container {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.application_main {
+    /*display: inline-block;*/
+    border-radius: 6px;
+    display: flow;
+    border: 1px solid hsla(210, 18%, 87%, 1);
+    padding: 16px;
+    font-size: 14px;
+    background-color: #f6f8fa;
+}
+
+.application_main .login_form {
+    /*width: 300px;*/
+    display: block;
+    margin: 20px;
+    align-items: center;
+}
+
+.application_main .login_form .submit {
+    width: 100%;
+    margin-bottom: 10px;
+}

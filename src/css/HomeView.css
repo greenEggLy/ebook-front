@@ -1,0 +1,12 @@
+
+.header {
+    align-content: flex-end;
+}
+
+.welcome {
+    margin-top: -20px;
+}
+
+.welcome h4 {
+    color: gainsboro;
+}

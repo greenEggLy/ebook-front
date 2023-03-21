@@ -1,0 +1,48 @@
+
+.text_info .user_name {
+    height: 40px;
+}
+
+.text_info .user_name p {
+    font-size: large;
+    font-weight: bold;
+}
+
+.text_info .user_about {
+    height: 40px;
+}
+
+.text_info .user_about p {
+    color: dimgray;
+}
+
+.change_info .row {
+    margin-top: 10px;
+}
+
+.row .button {
+    /*width: 100%;*/
+}
+
+
+.cart .table {
+    width: 600px;
+    /*object-fit: contain;*/
+}
+
+.cart .table .cart_pic img {
+    margin-left: 40px;
+}
+
+.modal_form {
+    align-items: center;
+    display: block;
+}
+
+.form_item {
+    margin-left: 40px;
+}
+
+.form_input {
+    max-width: 300px;
+}

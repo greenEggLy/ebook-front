@@ -1,0 +1,21 @@
+.card {
+    align-items: center;
+}
+
+.card .card_img {
+    width: 220px;
+    height: 220px;
+    object-fit: contain;
+}
+
+.search_bar {
+    margin-bottom: 30px;
+}
+
+.space {
+    width: 300%;
+}
+
+.space .search_content {
+    width: 300px;
+}

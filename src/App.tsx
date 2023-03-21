@@ -1,8 +1,12 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import { Counter } from "./features/counter/Counter";
+import "./App.css";
+import { HomeView } from "./views/HomeView";
+import { RootRouter } from "./services/RootRouter";
+import { Users } from "./data";
 
+/*
 function App() {
   return (
     <div className="App">
@@ -51,6 +55,15 @@ function App() {
           </a>
         </span>
       </header>
+    </div>
+  );
+}
+*/
+
+function App() {
+  return (
+    <div className={"wrapper"}>
+      <RootRouter user={Users[0]} />
     </div>
   );
 }
