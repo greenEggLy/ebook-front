@@ -1,11 +1,11 @@
 import "../css/BookView.css";
-import { BookInfo_ } from "../Interface";
+import { Book } from "../Interface";
 import { Button } from "antd";
 
 // import { Categories } from "../data";
 
 interface Props {
-  book: BookInfo_;
+  book: Book;
 }
 
 export const BookViewHeader = ({ book }: Props) => {

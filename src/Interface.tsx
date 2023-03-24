@@ -1,6 +1,6 @@
 import React from "react";
 
-export interface BookInfo_ {
+export interface Book {
   id: number;
   title: string;
   author: string;
@@ -12,17 +12,17 @@ export interface BookInfo_ {
   bought_number: number;
 }
 
-export interface CartItem {
+export interface Good {
   id: number;
-  book: BookInfo_;
+  book: Book;
   item_number: number;
 }
 
-export interface Navi_ {
-  key: number;
-  label: string;
-  icon: any; //an antd icon type
-  link: string;
+export interface Order {
+  id: number;
+  items: Good[];
+  time: Date;
+  // buyer: User;
 }
 
 export interface User {
@@ -30,7 +30,14 @@ export interface User {
   name: string;
   avatar: string;
   about_me: string;
-  cart: CartItem[];
-  bought: CartItem[];
+  cart: Good[];
+  orders: Order[];
   isAdmin: boolean;
+}
+
+export interface Navi_ {
+  key: number;
+  label: string;
+  icon: any; //an antd icon type
+  link: string;
 }

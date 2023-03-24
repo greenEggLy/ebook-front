@@ -1,12 +1,12 @@
 import { Card } from "antd";
-import { BookInfo_ } from "../Interface";
+import { Book } from "../Interface";
 import React from "react";
 import "../css/BooksView.css";
 
 const { Meta } = Card;
 
 interface Props {
-  book: BookInfo_;
+  book: Book;
 }
 
 export function BookCard({ book }: Props) {

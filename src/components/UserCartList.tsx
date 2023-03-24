@@ -1,4 +1,4 @@
-import { BookInfo_, CartItem } from "../Interface";
+import { Book, Good } from "../Interface";
 import { Button, Table } from "antd";
 import React from "react";
 import { ColumnsType } from "antd/es/table";
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 // import { cart_columns } from "../views/CartView";
 
 interface Props {
-  cartList: CartItem[];
+  cartList: Good[];
 }
 
 export const UserCartList = ({ cartList }: Props) => {
@@ -35,13 +35,13 @@ export const UserBoughtList = ({ cartList }: Props) => {
   );
 };
 
-const cart_columns: ColumnsType<CartItem> = [
+const cart_columns: ColumnsType<Good> = [
   {
     title: "书本图片",
     dataIndex: "book",
     key: "book_pic",
     width: "20%",
-    render: (book: BookInfo_) => (
+    render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
           <img alt={book.pics[0]} src={book.pics[0]} />
@@ -54,7 +54,7 @@ const cart_columns: ColumnsType<CartItem> = [
     dataIndex: "book",
     key: "book_name",
     width: "15%",
-    render: (book: BookInfo_) => <p className={"cart_title"}>{book.title}</p>,
+    render: (book: Book) => <p className={"cart_title"}>{book.title}</p>,
   },
 
   {
@@ -62,14 +62,14 @@ const cart_columns: ColumnsType<CartItem> = [
     dataIndex: "book",
     key: "book_isbn",
     // width: "25%",
-    render: (book: BookInfo_) => <p className={"cart_isbn"}>{book.ISBN}</p>,
+    render: (book: Book) => <p className={"cart_isbn"}>{book.ISBN}</p>,
   },
   {
     title: "单价",
     dataIndex: "book",
     key: "price",
     width: "20%",
-    render: (book: BookInfo_) => <p>{"￥" + book.price}</p>,
+    render: (book: Book) => <p>{"￥" + book.price}</p>,
   },
   {
     title: "数量",
@@ -86,13 +86,13 @@ const cart_columns: ColumnsType<CartItem> = [
   },
 ];
 
-const bought_columns: ColumnsType<CartItem> = [
+const bought_columns: ColumnsType<Good> = [
   {
     title: "书本图片",
     dataIndex: "book",
     key: "book_pic",
     width: "25%",
-    render: (book: BookInfo_) => (
+    render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
           <img alt={book.pics[0]} src={book.pics[0]} />
@@ -105,20 +105,20 @@ const bought_columns: ColumnsType<CartItem> = [
     dataIndex: "book",
     key: "book_name",
     width: "20%",
-    render: (book: BookInfo_) => <p className={"cart_title"}>{book.title}</p>,
+    render: (book: Book) => <p className={"cart_title"}>{book.title}</p>,
   },
   {
     title: "ISBN",
     dataIndex: "book",
     key: "book_isbn",
-    render: (book: BookInfo_) => <p className={"cart_isbn"}>{book.ISBN}</p>,
+    render: (book: Book) => <p className={"cart_isbn"}>{book.ISBN}</p>,
   },
   {
     title: "单价",
     dataIndex: "book",
     key: "price",
     width: "20%",
-    render: (book: BookInfo_) => <p>{"￥" + book.price}</p>,
+    render: (book: Book) => <p>{"￥" + book.price}</p>,
   },
   {
     title: "数量",

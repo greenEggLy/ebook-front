@@ -88,9 +88,9 @@ export const UserView = ({ user }: Props) => {
           <Panel header="my cart" key="1">
             <UserCartList cartList={user.cart} />
           </Panel>
-          <Panel header="my bought" key="2">
-            <UserBoughtList cartList={user.bought} />
-          </Panel>
+          {/*<Panel header="my bought" key="2">*/}
+          {/*  <UserBoughtList cartList={user.bought} />*/}
+          {/*</Panel>*/}
         </Collapse>
       </div>
     </div>

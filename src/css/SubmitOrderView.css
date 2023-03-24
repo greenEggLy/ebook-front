@@ -1,0 +1,18 @@
+
+.submit_title {
+    justify-content: center;
+}
+
+.submit_title p {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.submit_subtitle {
+    align-content: center;
+    justify-content: center;
+}
+
+.to_order {
+    justify-content: center;
+}

@@ -1,4 +1,4 @@
-import { BookInfo_, Navi_, CartItem, User } from "./Interface";
+import { Book, Navi_, Good, User, Order } from "./Interface";
 import {
   LaptopOutlined,
   UserOutlined,
@@ -7,7 +7,7 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 
-export const Books: BookInfo_[] = [
+export const Books: Book[] = [
   {
     id: 1,
     title: "book1",
@@ -143,13 +143,19 @@ export const side_navi: Navi_[] = [
   },
   {
     key: 3,
+    label: "Order",
+    icon: <DatabaseOutlined />,
+    link: "/order",
+  },
+  {
+    key: 4,
     label: "Profile",
     icon: <UserOutlined />,
     link: "/user",
   },
 ];
 
-export const CartInfo: CartItem[] = [
+export const Goods: Good[] = [
   {
     id: 1,
     book: Books[0],
@@ -165,21 +171,37 @@ export const CartInfo: CartItem[] = [
     book: Books[2],
     item_number: 1,
   },
-];
-
-export const BoughtInfo: CartItem[] = [
   {
-    id: 1,
+    id: 4,
     book: Books[3],
     item_number: 3,
   },
   {
-    id: 2,
+    id: 5,
     book: Books[4],
     item_number: 4,
   },
 ];
-
+export const Orders: Order[] = [
+  {
+    id: 1,
+    items: [Goods[0], Goods[1]],
+    time: new Date(),
+    // buyer: Users[1],
+  },
+  {
+    id: 2,
+    items: [Goods[2]],
+    time: new Date(),
+    // buyer: Users[1],
+  },
+  {
+    id: 3,
+    items: [Goods[3], Goods[4]],
+    time: new Date(),
+    // buyer: Users[1],
+  },
+];
 export const Users: User[] = [
   {
     id: 1,
@@ -187,8 +209,8 @@ export const Users: User[] = [
     avatar:
       "https://images.radio-canada.ca/q_auto,w_635/v1/ici-premiere/16x9/lal-raton-espece-envahissante.jpg",
     about_me: "love buying books",
-    cart: CartInfo,
-    bought: BoughtInfo,
+    cart: [],
+    orders: [],
     isAdmin: true,
   },
   {
@@ -197,8 +219,8 @@ export const Users: User[] = [
     avatar:
       "https://img03.sogoucdn.com/v2/thumb/retype_exclude_gif/ext/auto/crop/xy/ai/w/542/h/305?appid=200698&url=https://pic.baike.soso.com/ugc/baikepic2/5806/cut-20171206233249-1934724815_jpg_542_361_44589.jpg/0",
     about_me: "love eating books",
-    cart: CartInfo,
-    bought: BoughtInfo,
+    cart: Goods,
+    orders: [Orders[0], Orders[1], Orders[2]],
     isAdmin: false,
   },
 ];

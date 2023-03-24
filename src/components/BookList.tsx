@@ -1,10 +1,10 @@
 import { List } from "antd";
-import { BookInfo_ } from "../Interface";
+import { Book } from "../Interface";
 import { BookCard } from "./BookCard";
 import { Link } from "react-router-dom";
 
 interface Props {
-  books: BookInfo_[];
+  books: Book[];
 }
 
 export default function BookList({ books }: Props) {
@@ -14,7 +14,6 @@ export default function BookList({ books }: Props) {
         gutter: 16,
         column: 4,
       }}
-      // itemLayout={"horizontal"}
       pagination={{ pageSize: 16 }}
       dataSource={books}
       renderItem={(item) => (
@@ -24,14 +23,6 @@ export default function BookList({ books }: Props) {
           </Link>
         </List.Item>
       )}
-    >
-      {/*{books.map((item: BookInfo_) => (*/}
-      {/*  <List.Item style={{ width: 300 }}>*/}
-      {/*    <Link to={"/book/" + item.id}>*/}
-      {/*      <BookCard book={item} />*/}
-      {/*    </Link>*/}
-      {/*  </List.Item>*/}
-      {/*))}*/}
-    </List>
+    ></List>
   );
 }

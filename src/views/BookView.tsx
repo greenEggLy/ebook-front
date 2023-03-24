@@ -1,4 +1,4 @@
-import { BookInfo_ } from "../Interface";
+import { Book } from "../Interface";
 import { Books } from "../data";
 import { useState } from "react";
 import AddItem from "../components/AddItem";
@@ -14,7 +14,7 @@ export const BookView = () => {
     return Books.filter((item) => item.id === Number(index))[0];
   }
 
-  const book: BookInfo_ = getBook();
+  const book: Book = getBook();
 
   return (
     <div className={"book_view"}>
@@ -51,7 +51,7 @@ export const BookView = () => {
 };
 
 interface pic_props {
-  book: BookInfo_;
+  book: Book;
 }
 
 const PicDisplay = ({ book }: pic_props) => {

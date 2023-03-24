@@ -63,7 +63,7 @@ function App() {
 function App() {
   return (
     <div className={"wrapper"}>
-      <RootRouter user={Users[0]} />
+      <RootRouter user={Users[1]} />
     </div>
   );
 }

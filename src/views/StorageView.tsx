@@ -1,7 +1,7 @@
 import { BookSearch, CartSearch } from "../components/SearchBar";
 import { Books } from "../data";
 import { ColumnsType } from "antd/es/table";
-import { BookInfo_, CartItem } from "../Interface";
+import { Book, Good } from "../Interface";
 import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import type { InputRef } from "antd";
@@ -112,7 +112,7 @@ type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
 
 export const StorageView = () => {
-  const [dataSource, setDataSource] = useState<BookInfo_[]>(Books);
+  const [dataSource, setDataSource] = useState<Book[]>(Books);
   const [showModal, setShowModal] = useState(false);
   const [count, setCount] = useState(Books.length);
 
@@ -122,7 +122,7 @@ export const StorageView = () => {
   };
 
   const handleAdd = () => {
-    const newData: BookInfo_ = {
+    const newData: Book = {
       id: count,
       title: ``,
       author: "",
@@ -195,7 +195,7 @@ export const StorageView = () => {
     },
   ];
 
-  const handleSave = (row: BookInfo_) => {
+  const handleSave = (row: Book) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
@@ -219,7 +219,7 @@ export const StorageView = () => {
     }
     return {
       ...col,
-      onCell: (record: BookInfo_) => ({
+      onCell: (record: Book) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,

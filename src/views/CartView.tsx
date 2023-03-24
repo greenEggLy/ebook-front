@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { Checkbox, Table, Space, Button, Row, Col } from "antd";
+import { Checkbox, Table, Space, Button, Row, Col, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { BookInfo_, CartItem, User } from "../Interface";
+import { Book, Good, User } from "../Interface";
 import "../css/CartView.css";
 import "../css/BooksView.css";
 import { Link } from "react-router-dom";
 import { CartSearch } from "../components/SearchBar";
+
+const { Title } = Typography;
 
 interface Props {
   user: User;
@@ -15,13 +17,13 @@ export const CartView = ({ user }: Props) => {
   const [filterCart, setFilterCart] = useState(user.cart);
   const [chooseGood, setChooseGood] = useState<Set<number>>(new Set<number>());
 
-  const cart_columns: ColumnsType<CartItem> = [
+  const cart_columns: ColumnsType<Good> = [
     {
       title: "",
       key: "book_choose",
       // dataIndex: "book",
       width: "5%",
-      render: (value: CartItem) => (
+      render: (value: Good) => (
         <Checkbox
           onChange={(e) => {
             if (e.target.checked) chooseGood.add(value.id);
@@ -35,7 +37,7 @@ export const CartView = ({ user }: Props) => {
       dataIndex: "book",
       key: "book_pic",
       width: "20%",
-      render: (book: BookInfo_) => (
+      render: (book: Book) => (
         <div className={"cart_pic"}>
           <Link to={"/book/" + book.id}>
             <img alt={book.pics[0]} src={book.pics[0]} />
@@ -48,7 +50,7 @@ export const CartView = ({ user }: Props) => {
       dataIndex: "book",
       key: "book_name",
       width: "15%",
-      render: (book: BookInfo_) => <p className={"cart_title"}>{book.title}</p>,
+      render: (book: Book) => <p className={"cart_title"}>{book.title}</p>,
     },
 
     {
@@ -56,14 +58,14 @@ export const CartView = ({ user }: Props) => {
       dataIndex: "book",
       key: "book_isbn",
       // width: "25%",
-      render: (book: BookInfo_) => <p className={"cart_isbn"}>{book.ISBN}</p>,
+      render: (book: Book) => <p className={"cart_isbn"}>{book.ISBN}</p>,
     },
     {
       title: "单价",
       dataIndex: "book",
       key: "price",
       width: "20%",
-      render: (book: BookInfo_) => <p>{"￥" + book.price}</p>,
+      render: (book: Book) => <p>{"￥" + book.price}</p>,
     },
     {
       title: "数量",
@@ -88,15 +90,23 @@ export const CartView = ({ user }: Props) => {
 
   return (
     <div className={"cart"}>
+      <div className={"cart_title"}>
+        <Title>{"购物车"}</Title>
+      </div>
       <div className={"search_bar"}>
         <CartSearch allData={user.cart} setFilter={setFilterCart} />
       </div>
       <Table columns={cart_columns} dataSource={filterCart}></Table>
       <Row>
         <Col span={21} />
-        <Button className={"buy_button"} onClick={() => alert(chooseGood.size)}>
-          {"购买"}
-        </Button>
+        <Link to={"/checkOrder"}>
+          <Button
+            className={"buy_button"}
+            onClick={() => alert(chooseGood.size)}
+          >
+            {"购买"}
+          </Button>
+        </Link>
       </Row>
     </div>
   );
