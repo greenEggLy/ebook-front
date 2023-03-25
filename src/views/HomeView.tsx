@@ -1,10 +1,13 @@
 import React from "react";
-import { Layout, theme } from "antd";
+import { Col, Layout, Row, theme } from "antd";
 import { SideNavi } from "../components/Navigators";
 import { Outlet } from "react-router-dom";
 import { User } from "../Interface";
 import "../css/HomeView.css";
 import { SmallUser } from "../components/SmallUser";
+import { HomeHeader } from "../components/HomeHeader";
+import { Logo } from "../data";
+import * as url from "url";
 
 const { Header, Content, Sider } = Layout;
 
@@ -19,7 +22,7 @@ export const HomeView = ({ user }: Props) => {
   return (
     <Layout>
       <Header className="header">
-        <SmallUser user={user} />
+        <HomeHeader user={user} />
       </Header>
       <Layout>
         <Sider

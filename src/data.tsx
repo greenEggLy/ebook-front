@@ -224,3 +224,6 @@ export const Users: User[] = [
     isAdmin: false,
   },
 ];
+
+export const Logo: String =
+  "https://www.shutterstock.com/image-photo/portrait-funny-raccoon-closeup-isolated-260nw-563270347.jpg";

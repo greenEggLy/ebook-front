@@ -10,3 +10,14 @@
 .welcome h4 {
     color: gainsboro;
 }
+
+.header_content {
+    width: 1000px;
+    margin: 0 auto;
+
+}
+
+.header_title {
+    margin-top: 8px;
+}
+

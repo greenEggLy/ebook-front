@@ -133,6 +133,10 @@
     font: 14px "Fira Code";
 }
 
+.purchase {
+    padding-bottom: 20px;
+}
+
 .buy_box {
     padding: 30px 0 35px;
 }
@@ -169,8 +173,8 @@
     text-align: center;
 }
 
-.buy_box .buttons {
-
+.buttons {
+    margin-top: 20px;
     border-width: 0;
     float: left;
     width: 567px;

@@ -25,14 +25,13 @@ const items: MenuProps["items"] = [
 
 export const SmallUser = ({ user }: Props) => {
   return (
-    <Row>
-      <Col span={20}></Col>
-      <Space className={"welcome"}>
-        <Dropdown menu={{ items }}>
-          <Avatar size={30} src={user.avatar} />
-        </Dropdown>
-        <h4>{"Hello, " + user.name + "!"}</h4>
-      </Space>
-    </Row>
+    // <span className={"welcome"}>
+    <Space className={"welcome"}>
+      <Dropdown menu={{ items }}>
+        <Avatar size={30} src={user.avatar} />
+      </Dropdown>
+      <h4>{"Hello, " + user.name + "!"}</h4>
+    </Space>
+    // </span>
   );
 };
