@@ -5,6 +5,19 @@ import "./App.css";
 import { HomeView } from "./views/HomeView";
 import { RootRouter } from "./services/RootRouter";
 import { Users } from "./data";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+function App() {
+  return (
+    <div>
+      <BrowserRouter>
+        <RootRouter />
+      </BrowserRouter>
+    </div>
+  );
+}
+
+export default App;
 
 /*
 function App() {
@@ -59,13 +72,3 @@ function App() {
   );
 }
 */
-
-function App() {
-  return (
-    <div className={"wrapper"}>
-      <RootRouter user={Users[1]} />
-    </div>
-  );
-}
-
-export default App;

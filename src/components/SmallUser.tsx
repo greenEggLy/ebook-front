@@ -9,16 +9,8 @@ interface Props {
 }
 
 const items: MenuProps["items"] = [
-  // {
-  //   key: "1",
-  //   label: <Link to={"/user"}>{"查看个人资料"}</Link>,
-  // },
-  // {
-  //   key: "2",
-  //   label: <Link to={"/cart"}>{"查看购物车"}</Link>,
-  // },
   {
-    key: "3",
+    key: "1",
     label: <Link to={"/login"}>{"登出"}</Link>,
   },
 ];

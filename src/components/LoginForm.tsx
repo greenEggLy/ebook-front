@@ -1,14 +1,39 @@
 import React from "react";
 import { useState } from "react";
 import { Button, Checkbox, Form, Input } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Users } from "../data";
+import Cookies from "universal-cookie";
+import { setExpireDate } from "../services/GetUser";
 
 export const LoginForm = () => {
   const [remember, setRemember] = useState(false);
-  const [submit, setSubmit] = useState(false);
+  // const [submit, setSubmit] = useState(false);
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const checkUser = () => {
+    const usr_name = form.getFieldValue(["username"]);
+    const usr_password = form.getFieldValue(["password"]);
+    const usr = Users.find((user) => user.name === usr_name);
+    if (usr && usr.password === usr_password) {
+      const cookies = new Cookies();
+      if (remember) {
+        cookies.set("user", usr.id, {
+          path: "/",
+          expires: setExpireDate(1),
+          secure: true,
+        });
+      } else {
+        cookies.set("user", usr.id, { path: "/", secure: true });
+      }
+      navigate("/", { state: { user_id: usr.id } });
+    } else {
+      alert("error username or password");
+    }
+  };
 
   return (
-    <Form className={"login_form"}>
+    <Form form={form} onSubmitCapture={checkUser} className={"login_form"}>
       <Form.Item
         label="Username"
         name="username"

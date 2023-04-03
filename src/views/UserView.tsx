@@ -10,11 +10,13 @@ import {
   Row,
   Typography,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "../Interface";
 import "../css/UserView.css";
 import { UserBoughtList, UserCartList } from "../components/UserCartList";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getUser } from "../services/GetUser";
+import { LoginView } from "./LoginView";
 
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -23,8 +25,24 @@ interface Props {
   user: User;
 }
 
-export const UserView = ({ user }: Props) => {
+export const UserView = () => {
+  // const location = useLocation();
+  const navigation = useNavigate();
+  // if (!location.state) {
+  //   navigation("/login");
+  // }
+  let user: User | undefined = getUser();
+  useEffect(() => {
+    user = getUser();
+    if (!user) {
+      navigation("/login");
+    }
+  });
   const [open, setOpen] = useState(false);
+  if (!user) {
+    navigation("/login");
+    return <></>;
+  }
   return (
     <div className={"user_view"}>
       <div className={"user_profile"}>

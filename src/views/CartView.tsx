@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Checkbox, Table, Space, Button, Row, Col, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Book, Good, User } from "../Interface";
 import "../css/CartView.css";
 import "../css/BooksView.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CartSearch } from "../components/SearchBar";
+import { getUser } from "../services/GetUser";
+import { LoginView } from "./LoginView";
 
 const { Title } = Typography;
 
@@ -13,10 +15,19 @@ interface Props {
   user: User;
 }
 
-export const CartView = ({ user }: Props) => {
+export const CartView = () => {
+  // const location = useLocation();
+  const navigation = useNavigate();
+  let user: User | undefined = getUser();
+  useEffect(() => {
+    user = getUser();
+    if (!user) {
+      navigation("/login");
+    }
+  });
+  // @ts-ignore
   const [filterCart, setFilterCart] = useState(user.cart);
   const [chooseGood, setChooseGood] = useState<Set<number>>(new Set<number>());
-
   const cart_columns: ColumnsType<Good> = [
     {
       title: "",
@@ -87,7 +98,7 @@ export const CartView = ({ user }: Props) => {
       render: () => <Button className={"del_button"}>{"删除"}</Button>,
     },
   ];
-
+  if (user === undefined) return <></>;
   return (
     <div className={"cart"}>
       <div className={"cart_title"}>
@@ -99,7 +110,7 @@ export const CartView = ({ user }: Props) => {
       <Table columns={cart_columns} dataSource={filterCart}></Table>
       <Row>
         <Col span={21} />
-        <Link to={"/checkOrder"}>
+        <Link to={"/checkOrder"} state={{ goods: user.cart }}>
           <Button
             className={"buy_button"}
             onClick={() => alert(chooseGood.size)}

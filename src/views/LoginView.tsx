@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Col, Row, Space } from "antd";
 
 import { LoginForm, SignUpForm } from "../components/LoginForm";
 import "../css/LoginView.css";
+import { deleteUser } from "../services/GetUser";
 
 export const LoginView = () => {
+  // useEffect(() => deleteUser);
+  deleteUser();
   return (
     <div className={"login_wrapper"}>
       <div className={"position-relative"}>

@@ -2,7 +2,7 @@ import { Good } from "../Interface";
 import { CheckHeaderSteps } from "../components/CheckHeaderSteps";
 import { Button, Col, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import React from "react";
 import "../css/BuyView.css";
 
@@ -10,7 +10,9 @@ interface Props {
   goods: Good[];
 }
 
-export const CheckOrderView = ({ goods }: Props) => {
+export const CheckOrderView = () => {
+  const location = useLocation();
+  const goods: Good[] = location.state.goods;
   const check_columns: ColumnsType<Good> = [
     {
       title: "图片",

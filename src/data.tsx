@@ -211,6 +211,7 @@ export const Users: User[] = [
     about_me: "love buying books",
     cart: [],
     orders: [],
+    password: "123456",
     isAdmin: true,
   },
   {
@@ -221,6 +222,7 @@ export const Users: User[] = [
     about_me: "love eating books",
     cart: Goods,
     orders: [Orders[0], Orders[1], Orders[2]],
+    password: "123456",
     isAdmin: false,
   },
 ];

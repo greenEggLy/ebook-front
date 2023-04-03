@@ -32,6 +32,7 @@ export interface User {
   about_me: string;
   cart: Good[];
   orders: Order[];
+  password: string;
   isAdmin: boolean;
 }
 

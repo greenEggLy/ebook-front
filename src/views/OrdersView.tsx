@@ -1,11 +1,13 @@
 import { Book, Good, User } from "../Interface";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ColumnsType } from "antd/es/table";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Typography } from "antd";
 import { CartSearch, OrderSearch } from "../components/SearchBar";
 import { OrderList } from "../components/OrderList";
 import "../css/OrdersView.css";
+import { getUser } from "../services/GetUser";
+import { LoginView } from "./LoginView";
 
 const { Title } = Typography;
 
@@ -13,7 +15,17 @@ interface Props {
   user: User;
 }
 
-export const OrdersView = ({ user }: Props) => {
+export const OrdersView = () => {
+  // const location = useLocation();
+  const navigation = useNavigate();
+  let user: User | undefined = getUser();
+  useEffect(() => {
+    user = getUser();
+    if (!user) {
+      navigation("/login");
+    }
+  });
+  // @ts-ignore
   const [filterOrders, setFilterOrders] = useState(user.orders);
 
   const order_columns: ColumnsType<Good> = [
@@ -61,13 +73,13 @@ export const OrdersView = ({ user }: Props) => {
       title: "总价",
       dataIndex: "items",
       key: "item_price",
-      width: "25%",
+      width: "15%",
       render: (value, record) => (
         <p>{record.item_number * record.book.price}</p>
       ),
     },
   ];
-
+  if (!user) return <LoginView />;
   return (
     <div className={"order"}>
       <div className={"order_title"}>

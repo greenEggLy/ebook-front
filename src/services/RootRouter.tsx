@@ -23,39 +23,30 @@ import { OrdersView } from "../views/OrdersView";
 import { CheckOrderView } from "../views/CheckOrderView";
 import { SubmitOrderView } from "../views/SubmitOrderView";
 
-interface Props {
-  user: User;
-}
-
-export const RootRouter = ({ user }: Props) => {
+export const RootRouter = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path={"/"}
-          element={<HomeView user={user} />}
-          children={[
-            <Route index={true} path={"/booklist"} element={<BooksView />} />,
-            <Route path={"/cart"} element={<CartView user={user} />} />,
-            <Route
-              path={"/checkOrder"}
-              element={<CheckOrderView goods={user.cart} />}
-            />,
-            <Route path={"/submitOrder"} element={<SubmitOrderView />} />,
-            <Route path={"/order"} element={<OrdersView user={user} />} />,
-            <Route path={"/user"} element={<UserView user={user} />} />,
-            <Route path={"/book/:id"} element={<BookView />} />,
-            <Route path={"/admin/storage"} element={<StorageView />} />,
-            // eslint-disable-next-line react/jsx-pascal-case
-            <Route path={"/admin/orders"} element={<OrdersView_admin />} />,
-            <Route path={"/admin/statistics"} element={<StatView />} />,
-            <Route path={"/admin/manuser"} element={<ManUserView />} />,
-          ]}
-        />
-        <Route path={"/login"} element={<LoginView />} />
-        <Route path={"/signup"} element={<SignupView />} />
-        <Route path={"*"} element={<ErrorView />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route index={true} path={"/login"} element={<LoginView />} />
+      <Route
+        path={"/"}
+        element={<HomeView />}
+        children={[
+          <Route index={true} path={"/booklist"} element={<BooksView />} />,
+          <Route path={"/cart"} element={<CartView />} />,
+          <Route path={"/checkOrder"} element={<CheckOrderView />} />,
+          <Route path={"/submitOrder"} element={<SubmitOrderView />} />,
+          <Route path={"/order"} element={<OrdersView />} />,
+          <Route path={"/user"} element={<UserView />} />,
+          <Route path={"/book/:id"} element={<BookView />} />,
+          <Route path={"/admin/storage"} element={<StorageView />} />,
+          // eslint-disable-next-line react/jsx-pascal-case
+          <Route path={"/admin/orders"} element={<OrdersView_admin />} />,
+          <Route path={"/admin/statistics"} element={<StatView />} />,
+          <Route path={"/admin/manuser"} element={<ManUserView />} />,
+        ]}
+      />
+      <Route path={"/signup"} element={<SignupView />} />
+      <Route path={"*"} element={<ErrorView />} />
+    </Routes>
   );
 };

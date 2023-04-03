@@ -4,13 +4,14 @@ import { useState } from "react";
 import AddItem from "../components/AddItem";
 import "../css/BookView.css";
 import { BookViewHeader } from "../components/BookViewHeader";
+import { useParams } from "react-router-dom";
 
 export const BookView = () => {
   const [item_num, set_item_num] = useState(0);
+  const params = useParams();
 
   function getBook() {
-    let routes = document.location.toString().split("/");
-    let index = routes.pop();
+    let index = params.id;
     return Books.filter((item) => item.id === Number(index))[0];
   }
 

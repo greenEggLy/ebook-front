@@ -1,5 +1,5 @@
 import { Good, Order } from "../Interface";
-import { Table } from "antd";
+import { Col, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 
 interface Props {
@@ -8,9 +8,19 @@ interface Props {
 }
 
 export const OrderList = ({ order, order_columns }: Props) => {
+  let p = 0;
+  const calPrice = () => {
+    order.items.map((item) => (p += item.item_number * item.book.price));
+  };
+  calPrice();
   return (
     <>
-      <b>{"购买时间：" + order.time.getDate()}</b>
+      <Row>
+        <Col span={4}>
+          <b>{"购买时间：" + order.time.getDate()}</b>
+        </Col>
+        <b>{"总价: " + p.toString()}</b>
+      </Row>
       <Table
         className={"order_table"}
         size={"small"}

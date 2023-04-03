@@ -1,24 +1,35 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Col, Layout, Row, theme } from "antd";
 import { SideNavi } from "../components/Navigators";
-import { Outlet } from "react-router-dom";
+import {
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { User } from "../Interface";
 import "../css/HomeView.css";
-import { SmallUser } from "../components/SmallUser";
+import { ToolFilled } from "@ant-design/icons";
 import { HomeHeader } from "../components/HomeHeader";
-import { Logo } from "../data";
-import * as url from "url";
+import { getUser } from "../services/GetUser";
+import { LoginView } from "./LoginView";
 
 const { Header, Content, Sider } = Layout;
 
-interface Props {
-  user: User;
-}
-
-export const HomeView = ({ user }: Props) => {
+export const HomeView = () => {
+  const navigation = useNavigate();
+  let user: User | undefined = getUser();
+  useEffect(() => {
+    user = getUser();
+    if (!user) {
+      navigation("/login");
+    }
+  });
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+  if (!user) return <></>;
   return (
     <Layout>
       <Header className="header">
@@ -31,7 +42,7 @@ export const HomeView = ({ user }: Props) => {
             background: colorBgContainer,
           }}
           collapsible={true}
-          trigger={null}
+          trigger={<ToolFilled />}
         >
           <SideNavi user={user} />
         </Sider>
