@@ -3,11 +3,13 @@ import { Col, Row, Space } from "antd";
 
 import { LoginForm, SignUpForm } from "../components/LoginForm";
 import "../css/LoginView.css";
-import { deleteUser } from "../services/GetUser";
+import { Logout } from "../services/LoginService";
 
 export const LoginView = () => {
   // useEffect(() => deleteUser);
-  deleteUser();
+  useEffect(() => {
+    Logout().catch(console.error);
+  }, []);
   return (
     <div className={"login_wrapper"}>
       <div className={"position-relative"}>

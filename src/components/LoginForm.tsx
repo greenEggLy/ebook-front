@@ -1,35 +1,38 @@
 import React from "react";
 import { useState } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { Users } from "../data";
 import Cookies from "universal-cookie";
-import { setExpireDate } from "../services/GetUser";
+import { setExpireDate } from "../utils/cookieOps";
+import { Login } from "../services/LoginService";
+import { sessionMsg } from "../Interface";
 
 export const LoginForm = () => {
   const [remember, setRemember] = useState(false);
-  // const [submit, setSubmit] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const checkUser = () => {
+  const checkUser = async () => {
     const usr_name = form.getFieldValue(["username"]);
     const usr_password = form.getFieldValue(["password"]);
-    const usr = Users.find((user) => user.name === usr_name);
-    if (usr && usr.password === usr_password) {
-      const cookies = new Cookies();
-      if (remember) {
-        cookies.set("user", usr.id, {
-          path: "/",
-          expires: setExpireDate(1),
-          secure: true,
-        });
-      } else {
-        cookies.set("user", usr.id, { path: "/", secure: true });
+    const callback = (data: React.SetStateAction<sessionMsg | undefined>) => {
+      if (data) {
+        if ("status" in data && data.status >= 0) {
+          localStorage.setItem("user", data.data.username);
+          navigate("/");
+          message.success(data.msg);
+        } else {
+          if ("msg" in data) {
+            message.error(data.msg);
+          }
+        }
       }
-      navigate("/", { state: { user_id: usr.id } });
-    } else {
-      alert("error username or password");
-    }
+    };
+    await Login(
+      usr_name,
+      usr_password,
+      (data: React.SetStateAction<sessionMsg | undefined>) => callback(data)
+    );
   };
 
   return (

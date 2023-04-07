@@ -1,4 +1,4 @@
-import { Book, Good } from "../Interface";
+import { Book, OrderItem } from "../Interface";
 import { Button, Table } from "antd";
 import React from "react";
 import { ColumnsType } from "antd/es/table";
@@ -7,12 +7,11 @@ import { Link } from "react-router-dom";
 // import { cart_columns } from "../views/CartView";
 
 interface Props {
-  cartList: Good[];
+  cartList: OrderItem[];
 }
 
 export const UserCartList = ({ cartList }: Props) => {
   return (
-    // <></>
     <Table
       className={"table"}
       size={"large"}
@@ -35,7 +34,7 @@ export const UserBoughtList = ({ cartList }: Props) => {
   );
 };
 
-const cart_columns: ColumnsType<Good> = [
+const cart_columns: ColumnsType<OrderItem> = [
   {
     title: "书本图片",
     dataIndex: "book",
@@ -44,7 +43,7 @@ const cart_columns: ColumnsType<Good> = [
     render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
-          <img alt={book.pics[0]} src={book.pics[0]} />
+          <img alt={book.pics[0].url} src={book.pics[0].url} />
         </Link>
       </div>
     ),
@@ -62,7 +61,7 @@ const cart_columns: ColumnsType<Good> = [
     dataIndex: "book",
     key: "book_isbn",
     // width: "25%",
-    render: (book: Book) => <p className={"cart_isbn"}>{book.ISBN}</p>,
+    render: (book: Book) => <p className={"cart_isbn"}>{book.isbn}</p>,
   },
   {
     title: "单价",
@@ -76,17 +75,17 @@ const cart_columns: ColumnsType<Good> = [
     dataIndex: "item_number",
     key: "item_number",
     width: "15%",
-    render: (item_number: number) => (
+    render: (_, record) => (
       <div className={"num"}>
         {/*<Button className={"num_minus"}>{"-"}</Button>*/}
-        <input className={"name_info"} value={item_number} />
+        <input className={"name_info"} value={record.number} />
         {/*<Button className={"num_add"}>{"+"}</Button>*/}
       </div>
     ),
   },
 ];
 
-const bought_columns: ColumnsType<Good> = [
+const bought_columns: ColumnsType<OrderItem> = [
   {
     title: "书本图片",
     dataIndex: "book",
@@ -95,7 +94,7 @@ const bought_columns: ColumnsType<Good> = [
     render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
-          <img alt={book.pics[0]} src={book.pics[0]} />
+          <img alt={book.pics[0].url} src={book.pics[0].url} />
         </Link>
       </div>
     ),
@@ -111,7 +110,7 @@ const bought_columns: ColumnsType<Good> = [
     title: "ISBN",
     dataIndex: "book",
     key: "book_isbn",
-    render: (book: Book) => <p className={"cart_isbn"}>{book.ISBN}</p>,
+    render: (book: Book) => <p className={"cart_isbn"}>{book.isbn}</p>,
   },
   {
     title: "单价",

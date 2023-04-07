@@ -1,12 +1,12 @@
-import { BookSearch, CartSearch } from "../components/SearchBar";
-import { Books } from "../data";
+import { BookSearch, CartSearch } from "../../components/SearchBar";
+import { Books } from "../../data";
 import { ColumnsType } from "antd/es/table";
-import { Book, Good } from "../Interface";
+import { Book, OrderItem } from "../../Interface";
 import { Link } from "react-router-dom";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import type { InputRef } from "antd";
 import { Button, Form, Image, Input, Modal, Popconfirm, Table } from "antd";
-import "../css/StorageView.css";
+import "../../css/StorageView.css";
 import type { FormInstance } from "antd/es/form";
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
@@ -126,12 +126,12 @@ export const StorageView = () => {
       id: count,
       title: ``,
       author: "",
-      ISBN: ``,
+      isbn: ``,
       price: 0,
       pics: [],
       pub: "",
-      left_number: 0,
-      bought_number: 0,
+      stock: 0,
+      sales: 0,
     };
     setDataSource([...dataSource, newData]);
     setCount(count + 1);

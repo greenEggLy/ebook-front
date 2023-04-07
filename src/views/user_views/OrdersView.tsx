@@ -1,13 +1,13 @@
-import { Book, Good, User } from "../Interface";
+import { Book, Order, OrderItem, User } from "../../Interface";
 import React, { useEffect, useState } from "react";
 import { ColumnsType } from "antd/es/table";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Typography } from "antd";
-import { CartSearch, OrderSearch } from "../components/SearchBar";
-import { OrderList } from "../components/OrderList";
-import "../css/OrdersView.css";
-import { getUser } from "../services/GetUser";
-import { LoginView } from "./LoginView";
+import { OrderSearch } from "../../components/SearchBar";
+import { OrderList } from "../../components/OrderList";
+import "../../css/OrdersView.css";
+import { getUser } from "../../services/UserService";
+import { getUserOrders } from "../../services/OrderService";
 
 const { Title } = Typography;
 
@@ -18,17 +18,25 @@ interface Props {
 export const OrdersView = () => {
   // const location = useLocation();
   const navigation = useNavigate();
-  let user: User | undefined = getUser();
+  const [user, setUser] = useState<User>();
+  const [allOrder, setAllOrder] = useState<Order[]>();
+  const [filterOrders, setFilterOrders] = useState<Order[]>();
   useEffect(() => {
-    user = getUser();
-    if (!user) {
-      navigation("/login");
+    getUser((data: React.SetStateAction<User | undefined>) =>
+      setUser(data)
+    ).catch(console.error);
+  }, [navigation]);
+  useEffect(() => {
+    if (user) {
+      getUserOrders(
+        user.id,
+        (data: React.SetStateAction<Order[] | undefined>) => setAllOrder(data),
+        (data: React.SetStateAction<Order[] | undefined>) =>
+          setFilterOrders(data)
+      ).catch(console.error);
     }
-  });
-  // @ts-ignore
-  const [filterOrders, setFilterOrders] = useState(user.orders);
-
-  const order_columns: ColumnsType<Good> = [
+  }, [user]);
+  const order_columns: ColumnsType<OrderItem> = [
     {
       title: "图片",
       key: "book_pic",
@@ -37,7 +45,7 @@ export const OrdersView = () => {
       render: (value, record) => (
         <div className={"order_pic"}>
           <Link to={"/book/" + record.book.id}>
-            <img alt={record.book.pics[0]} src={record.book.pics[0]} />
+            <img alt={record.book.pics[0].url} src={record.book.pics[0].url} />
           </Link>
         </div>
       ),
@@ -57,7 +65,7 @@ export const OrdersView = () => {
       key: "book_isbn",
       width: "15%",
       render: (value, record) => (
-        <p className={"cart_isbn"}>{record.book.ISBN}</p>
+        <p className={"cart_isbn"}>{record.book.isbn}</p>
       ),
     },
     {
@@ -65,28 +73,25 @@ export const OrdersView = () => {
       dataIndex: "items",
       key: "item_number",
       width: "15%",
-      render: (value, record) => (
-        <p className={"name_info"}>{record.item_number}</p>
-      ),
+      render: (value, record) => <p className={"name_info"}>{record.number}</p>,
     },
     {
       title: "总价",
       dataIndex: "items",
       key: "item_price",
       width: "15%",
-      render: (value, record) => (
-        <p>{record.item_number * record.book.price}</p>
-      ),
+      render: (value, record) => <p>{record.number * record.book.price}</p>,
     },
   ];
-  if (!user) return <LoginView />;
+  if (!user) return <></>;
+  if (!filterOrders || !allOrder) return <></>;
   return (
     <div className={"order"}>
       <div className={"order_title"}>
         <Title>{"订单"}</Title>
       </div>
       <div className={"search_bar"}>
-        <OrderSearch allOrders={user.orders} setFilter={setFilterOrders} />
+        <OrderSearch allOrders={allOrder} setFilter={setFilterOrders} />
       </div>
       {filterOrders.map((order) => (
         <OrderList order={order} order_columns={order_columns} />

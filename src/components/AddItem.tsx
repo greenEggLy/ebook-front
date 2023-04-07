@@ -1,13 +1,26 @@
 import "../css/BookView.css";
 import { Button } from "antd";
+import { addCartItem } from "../services/CartService";
+import { createOrder, createOrderDirectly } from "../services/OrderService";
+import { useNavigate } from "react-router-dom";
 
 interface AddItem {
+  user_id: number;
+  book_id: number;
   stock: number;
   item_num: number;
   set_item_num: any;
 }
 
-export default function AddItem({ stock, item_num, set_item_num }: AddItem) {
+export const AddItem = ({
+  user_id,
+  book_id,
+  stock,
+  item_num,
+  set_item_num,
+}: AddItem) => {
+  const navigation = useNavigate();
+
   function set_num(text: string) {
     if (!isNaN(Number(text)) && Number(text) >= 0) set_item_num(Number(text));
   }
@@ -42,19 +55,27 @@ export default function AddItem({ stock, item_num, set_item_num }: AddItem) {
       <div className={"buttons"}>
         <Button
           className={"to_cart"}
-          onClick={() => console.log("add to chart")}
-          disabled={!canBuy}
+          onClick={() => {
+            addCartItem(user_id, book_id, item_num)
+              .then(() => alert("加购成功"))
+              .then(() => set_num("0"));
+          }}
+          disabled={!canBuy || !item_num}
         >
           {"加入购物车"}
         </Button>
         <Button
           className={"buy_now"}
-          onClick={() => console.log("purchase now")}
-          disabled={!canBuy}
+          onClick={() => {
+            createOrderDirectly(user_id, book_id, item_num).then(() =>
+              navigation("/submitOrder")
+            );
+          }}
+          disabled={!canBuy || !item_num}
         >
           {"立即购买"}
         </Button>
       </div>
     </div>
   );
-}
+};

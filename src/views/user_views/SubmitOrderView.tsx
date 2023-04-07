@@ -1,6 +1,6 @@
 import { Col, Row } from "antd";
 import { Link } from "react-router-dom";
-import "../css/SubmitOrderView.css";
+import "../../css/SubmitOrderView.css";
 
 export const SubmitOrderView = () => {
   return (

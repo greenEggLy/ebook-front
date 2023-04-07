@@ -1,39 +1,50 @@
 import React from "react";
 
+export interface Picture {
+  id: number;
+  url: string;
+}
+
 export interface Book {
   id: number;
   title: string;
   author: string;
-  ISBN: string;
+  isbn: string;
   price: number;
-  pics: string[];
   pub: string;
-  left_number: number;
-  bought_number: number;
+  stock: number;
+  sales: number;
+  pics: Picture[];
 }
 
-export interface Good {
+export interface CartItem {
   id: number;
+  number: number;
   book: Book;
-  item_number: number;
+}
+
+export interface OrderItem {
+  id: number;
+  number: number;
+  book: Book;
 }
 
 export interface Order {
   id: number;
-  items: Good[];
   time: Date;
-  // buyer: User;
+  items: OrderItem[];
 }
 
 export interface User {
   id: number;
   name: string;
   avatar: string;
-  about_me: string;
-  cart: Good[];
+  about: string;
+  isAdmin: boolean;
+  isBlocked: boolean;
+  cart: CartItem[];
   orders: Order[];
   password: string;
-  isAdmin: boolean;
 }
 
 export interface Navi_ {
@@ -41,4 +52,17 @@ export interface Navi_ {
   label: string;
   icon: any; //an antd icon type
   link: string;
+}
+
+interface sessionData {
+  id: number;
+  isBlocked: boolean;
+  userType: number;
+  username: string;
+}
+
+export interface sessionMsg {
+  status: number;
+  msg: string;
+  data: sessionData;
 }

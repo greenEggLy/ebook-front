@@ -1,31 +1,25 @@
-import React, { useEffect } from "react";
-import { Col, Layout, Row, theme } from "antd";
-import { SideNavi } from "../components/Navigators";
-import {
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import { User } from "../Interface";
-import "../css/HomeView.css";
+import React, { useEffect, useState } from "react";
+import { Layout, theme } from "antd";
+import { SideNavi } from "../../components/Navigators";
+import { Outlet, useNavigate } from "react-router-dom";
+import "../../css/HomeView.css";
 import { ToolFilled } from "@ant-design/icons";
-import { HomeHeader } from "../components/HomeHeader";
-import { getUser } from "../services/GetUser";
-import { LoginView } from "./LoginView";
+import { HomeHeader } from "../../components/HomeHeader";
+import { User } from "../../Interface";
+import { getUser } from "../../services/UserService";
 
 const { Header, Content, Sider } = Layout;
 
 export const HomeView = () => {
   const navigation = useNavigate();
-  let user: User | undefined = getUser();
+  const [user, setUser] = useState<User>();
   useEffect(() => {
-    user = getUser();
-    if (!user) {
-      navigation("/login");
-    }
-  });
+    getUser((data: React.SetStateAction<User | undefined>) =>
+      setUser(data)
+    ).catch(console.log);
+    // if (!user) navigation("/login");
+  }, [navigation]);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();

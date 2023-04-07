@@ -6,22 +6,22 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import { HomeView } from "../views/HomeView";
-import { CartView } from "../views/CartView";
-import { UserView } from "../views/UserView";
-import { BookView } from "../views/BookView";
-import { ErrorView } from "../views/ErrorView";
-import { BooksView } from "../views/BooksView";
-import { LoginView, SignupView } from "../views/LoginView";
-import { User } from "../Interface";
-import { StorageView } from "../views/StorageView";
-import { OrdersView_admin } from "../views/OrdersView_admin";
+import { HomeView } from "./views/user_views/HomeView";
+import { CartView } from "./views/user_views/CartView";
+import { UserView } from "./views/user_views/UserView";
+import { BookView } from "./views/user_views/BookView";
+import { ErrorView } from "./views/ErrorView";
+import { BooksView } from "./views/user_views/BooksView";
+import { LoginView, SignupView } from "./views/LoginView";
+import { User } from "./Interface";
+import { StorageView } from "./views/admin_views/StorageView";
+import { OrdersView_admin } from "./views/admin_views/OrdersView_admin";
 import { Statistic } from "antd";
-import { StatView } from "../views/StatView";
-import { ManUserView } from "../views/ManUserView";
-import { OrdersView } from "../views/OrdersView";
-import { CheckOrderView } from "../views/CheckOrderView";
-import { SubmitOrderView } from "../views/SubmitOrderView";
+import { StatView } from "./views/admin_views/StatView";
+import { ManUserView } from "./views/admin_views/ManUserView";
+import { OrdersView } from "./views/user_views/OrdersView";
+import { CheckOrderView } from "./views/user_views/CheckOrderView";
+import { SubmitOrderView } from "./views/user_views/SubmitOrderView";
 
 export const RootRouter = () => {
   return (
