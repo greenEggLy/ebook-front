@@ -1,6 +1,6 @@
 import "../css/BookView.css";
-import { Book } from "../Interface";
-import { Button } from "antd";
+import {Book} from "../Interface";
+import {Button} from "antd";
 
 // import { Categories } from "../data";
 

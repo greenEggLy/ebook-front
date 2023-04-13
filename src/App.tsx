@@ -1,11 +1,7 @@
 import React from "react";
-import logo from "./assets/logo.svg";
-import { Counter } from "./features/counter/Counter";
 import "./App.css";
-import { HomeView } from "./views/user_views/HomeView";
 import { RootRouter } from "./RootRouter";
-import { Users } from "./data";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   return (

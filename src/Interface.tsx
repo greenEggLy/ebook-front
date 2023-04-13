@@ -1,10 +1,5 @@
 import React from "react";
 
-export interface Picture {
-  id: number;
-  url: string;
-}
-
 export interface Book {
   id: number;
   title: string;
@@ -14,7 +9,7 @@ export interface Book {
   pub: string;
   stock: number;
   sales: number;
-  pics: Picture[];
+  picture: string;
 }
 
 export interface CartItem {
@@ -25,6 +20,7 @@ export interface CartItem {
 
 export interface OrderItem {
   id: number;
+  price: number;
   number: number;
   book: Book;
 }
@@ -33,6 +29,17 @@ export interface Order {
   id: number;
   time: Date;
   items: OrderItem[];
+  buyer: User;
+}
+
+export interface Stat_Sales {
+  bookName: string;
+  sales: number;
+}
+
+export interface Stat_Money {
+  bookName: string;
+  money: number;
 }
 
 export interface User {
@@ -40,29 +47,55 @@ export interface User {
   name: string;
   avatar: string;
   about: string;
-  isAdmin: boolean;
+  is_admin: boolean;
+  email: string;
   isBlocked: boolean;
   cart: CartItem[];
   orders: Order[];
-  password: string;
 }
 
 export interface Navi_ {
   key: number;
   label: string;
-  icon: any; //an antd icon type
+  icon: any;
   link: string;
 }
 
-interface sessionData {
-  id: number;
-  isBlocked: boolean;
-  userType: number;
+interface backData {
+  userId: number;
   username: string;
+  userType: number;
 }
 
-export interface sessionMsg {
+export interface backMsg {
   status: number;
   msg: string;
-  data: sessionData;
+  data: backData;
+}
+
+export interface ManUserInfo {
+  id: number;
+  username: string;
+  email: string;
+  is_admin: boolean;
+  is_blocked: boolean;
+}
+
+export interface LogInForm {
+  username: string;
+  password: string;
+}
+
+export interface SignUpForm {
+  username: string;
+  password: string;
+  email: string;
+}
+
+export interface UserUinfo {
+  id: number;
+  username: string;
+  avatar: string;
+  about: string;
+  email: string;
 }

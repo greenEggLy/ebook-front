@@ -1,12 +1,8 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { Users } from "../data";
-import Cookies from "universal-cookie";
-import { setExpireDate } from "../utils/cookieOps";
-import { Login } from "../services/LoginService";
-import { sessionMsg } from "../Interface";
+import { login, signup } from "../services/LoginService";
+import { backMsg } from "../Interface";
 
 export const LoginForm = () => {
   const [remember, setRemember] = useState(false);
@@ -15,24 +11,18 @@ export const LoginForm = () => {
   const checkUser = async () => {
     const usr_name = form.getFieldValue(["username"]);
     const usr_password = form.getFieldValue(["password"]);
-    const callback = (data: React.SetStateAction<sessionMsg | undefined>) => {
-      if (data) {
-        if ("status" in data && data.status >= 0) {
-          localStorage.setItem("user", data.data.username);
-          navigate("/");
-          message.success(data.msg);
-        } else {
-          if ("msg" in data) {
-            message.error(data.msg);
-          }
-        }
-      }
+    const callback = (data: backMsg) => {
+      if (data && data.status >= 0)
+        localStorage.setItem("user", data.data.username);
     };
-    await Login(
-      usr_name,
-      usr_password,
-      (data: React.SetStateAction<sessionMsg | undefined>) => callback(data)
-    );
+    await login(usr_name, usr_password, (data: backMsg) => {
+      callback(data);
+      if (data.status < 0) {
+        message.error(data.msg, 1);
+      } else {
+        message.success(data.msg, 0.5).then(() => navigate("/"));
+      }
+    });
   };
 
   return (
@@ -79,8 +69,26 @@ export const LoginForm = () => {
 };
 
 export const SignUpForm = () => {
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const check_sign_up = () => {
+    const username = form.getFieldValue(["username"]);
+    const password = form.getFieldValue(["password"]);
+    const email = form.getFieldValue(["email"]);
+    let msg: backMsg;
+    signup(username, email, password, (data: backMsg) => (msg = data)).then(
+      () => {
+        if (msg.status >= 0) {
+          message.success(msg.msg, 0.5).then(() => navigate("/login"));
+        } else {
+          message.error(msg.msg, 1);
+        }
+      }
+    );
+  };
+
   return (
-    <Form className={"login_form"}>
+    <Form className={"login_form"} form={form} onSubmitCapture={check_sign_up}>
       <Form.Item
         label="Username"
         name="username"

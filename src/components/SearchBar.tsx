@@ -1,8 +1,12 @@
-import { Book, OrderItem, Order, CartItem } from "../Interface";
-import { AudioOutlined } from "@ant-design/icons";
+import {
+  Book,
+  CartItem,
+  ManUserInfo,
+  Order,
+  OrderItem,
+  User,
+} from "../Interface";
 import { Input, Space } from "antd";
-import { useState } from "react";
-import { Books } from "../data";
 
 const { Search } = Input;
 
@@ -70,7 +74,7 @@ interface PropsCart {
 }
 
 interface FilterCart {
-  item: OrderItem;
+  item: CartItem;
   text: string;
 }
 
@@ -90,9 +94,9 @@ export const CartSearch = ({ allData, setFilter }: PropsCart) => {
   }
 
   function onSearch(text: string) {
-    let allNewData: OrderItem[] = [];
+    let allNewData: CartItem[] = [];
     if (text) {
-      let newData: OrderItem[] = [];
+      let newData: CartItem[] = [];
       let textGroup = text.trim().split(/\s+/);
       for (let text of textGroup) {
         newData = [];
@@ -166,6 +170,44 @@ export const OrderSearch = ({ allOrders, setFilter }: PropsOrder) => {
       }
       setFilter(allNewData);
     } else setFilter(allOrders);
+  }
+
+  return (
+    <Space className={"space"}>
+      <Search
+        className={"search_content"}
+        placeholder="input search text"
+        enterButton="Search"
+        allowClear={true}
+        size="large"
+        onSearch={onSearch}
+      />
+    </Space>
+  );
+};
+
+interface UserProps {
+  allUsers: ManUserInfo[];
+  setFilter: any;
+}
+
+export const UserSearch = ({ allUsers, setFilter }: UserProps) => {
+  function onSearch(text: string) {
+    let allNewData: ManUserInfo[] = [];
+    if (text) {
+      let newData: ManUserInfo[] = [];
+      let textGroup = text.trim().split(/\s+/);
+      for (let text of textGroup) {
+        newData = [];
+        newData = allUsers.filter((item) => item.username.indexOf(text) > -1);
+        if (newData) {
+          for (const data of newData) {
+            if (!allNewData.includes(data)) allNewData.push(data);
+          }
+        }
+      }
+      setFilter(allNewData);
+    } else setFilter(allUsers);
   }
 
   return (

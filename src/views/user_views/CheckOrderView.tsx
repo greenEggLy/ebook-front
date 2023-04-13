@@ -1,4 +1,4 @@
-import { CartItem, OrderItem } from "../../Interface";
+import { CartItem } from "../../Interface";
 import { CheckHeaderSteps } from "../../components/CheckHeaderSteps";
 import { Button, Col, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
@@ -14,16 +14,16 @@ export const CheckOrderView = () => {
   const user_id = location.state.user_id;
   const [goods, setGoods] = useState<CartItem[]>();
   let whole_price: React.MutableRefObject<number> = useRef<number>(0);
-  console.log(cartItem_ids);
+  // console.log(cartItem_ids);
   useEffect(() => {
     getCartItems(
       cartItem_ids,
       (data: React.SetStateAction<CartItem[] | undefined>) => setGoods(data)
-    ).catch(console.error);
+    ).catch((err) => console.error(err));
   }, [cartItem_ids]);
 
   useEffect(() => cal_price(), [goods]);
-  const check_columns: ColumnsType<OrderItem> = [
+  const check_columns: ColumnsType<CartItem> = [
     {
       title: "图片",
       key: "book_pic",
@@ -31,7 +31,7 @@ export const CheckOrderView = () => {
       dataIndex: "items",
       render: (value, record) => (
         <div className={"order_pic"}>
-          <img alt={record.book.pics[0].url} src={record.book.pics[0].url} />
+          <img alt={record.book.picture} src={record.book.picture} />
         </div>
       ),
     },
@@ -94,7 +94,6 @@ export const CheckOrderView = () => {
           <Button
             className={"buy_button"}
             onClick={() => {
-              alert(user_id);
               createOrder(user_id, goods);
             }}
           >

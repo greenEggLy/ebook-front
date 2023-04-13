@@ -1,13 +1,31 @@
-import { BookSearch, CartSearch } from "../../components/SearchBar";
-import { Books } from "../../data";
-import { ColumnsType } from "antd/es/table";
-import { Book, OrderItem } from "../../Interface";
-import { Link } from "react-router-dom";
+import { BookSearch } from "../../components/SearchBar";
+import { Book, backMsg, User } from "../../Interface";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import type { InputRef } from "antd";
-import { Button, Form, Image, Input, Modal, Popconfirm, Table } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  message,
+  Modal,
+  Popconfirm,
+  Table,
+  Typography,
+} from "antd";
 import "../../css/StorageView.css";
 import type { FormInstance } from "antd/es/form";
+import {
+  addBook,
+  delBook,
+  get_all_books,
+  modBook,
+  modBookPic,
+} from "../../services/BookService";
+import { useNavigate } from "react-router-dom";
+import { check_session } from "../../services/LoginService";
+import { emptySessionMsg } from "../../emptyData";
+
+const { Title } = Typography;
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
@@ -31,6 +49,18 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
       </EditableContext.Provider>
     </Form>
   );
+};
+
+const newData: Book = {
+  id: 0,
+  title: ``,
+  author: "",
+  isbn: ``,
+  price: 0,
+  picture: "",
+  pub: "",
+  stock: 0,
+  sales: 0,
 };
 
 interface EditableCellProps {
@@ -73,7 +103,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
-      console.log("Save failed:", errInfo);
+      // console.log("Save failed:", errInfo);
     }
   };
 
@@ -112,29 +142,90 @@ type EditableTableProps = Parameters<typeof Table>[0];
 type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
 
 export const StorageView = () => {
-  const [dataSource, setDataSource] = useState<Book[]>(Books);
+  const navigation = useNavigate();
+  const msg_ref = useRef<backMsg>(emptySessionMsg);
+
+  const [dataSource, setDataSource] = useState<Book[]>();
   const [showModal, setShowModal] = useState(false);
-  const [count, setCount] = useState(Books.length);
+
+  const [disButton, setDisButton] = useState(true);
+  const [selectId, setSelectId] = useState<number>(-1);
+  const [formUrl, setFormUrl] = useState<string>("");
+
+  const [newBook, setNewBook] = useState<Book>(newData);
+  useEffect(() => {
+    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
+      if (msg_ref.current.status >= 0) {
+        if (msg_ref.current.data.userType < 1)
+          message.error("没有管理员权限！").then(() => navigation("/"));
+        else {
+          get_all_books((data: Book[]) => setDataSource(data)).catch((err) =>
+            console.error(err)
+          );
+        }
+      } else {
+        message.error(msg_ref.current.msg).then(() => navigation("/login"));
+      }
+    });
+  }, [navigation]);
 
   const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.id !== key);
-    setDataSource(newData);
+    if (dataSource) {
+      const newData = dataSource.filter((item) => item.id !== key);
+      if (key > 0) delBook(key).catch((err) => console.error(err));
+      if (key === 0) setDisButton(true);
+      setDataSource(newData);
+    }
+  };
+
+  const canAdd = () => {
+    if (
+      !(
+        newBook.title &&
+        newBook.author &&
+        newBook.isbn &&
+        newBook.price &&
+        newBook.pub &&
+        newBook.picture
+      )
+    )
+      return -1;
+    if (newBook.price <= 0) return -2;
+    return 0;
+  };
+
+  const equals = (book1: Book, book2: Book) => {
+    if (book1.picture !== book2.picture) return false;
+    if (book1.pub !== book2.pub) return false;
+    if (book1.isbn !== book2.isbn) return false;
+    if (book1.price !== book2.price) return false;
+    if (book1.author !== book2.author) return false;
+    if (book1.stock !== book2.stock) return false;
+    return book1.title === book2.title;
   };
 
   const handleAdd = () => {
-    const newData: Book = {
-      id: count,
-      title: ``,
-      author: "",
-      isbn: ``,
-      price: 0,
-      pics: [],
-      pub: "",
-      stock: 0,
-      sales: 0,
-    };
-    setDataSource([...dataSource, newData]);
-    setCount(count + 1);
+    if (dataSource) {
+      setDataSource([newData, ...dataSource]);
+      setNewBook(newData);
+      setDisButton(false);
+    }
+  };
+  const handleConfirmAdd = () => {
+    if (dataSource) {
+      setDisButton(true);
+      let status = canAdd();
+      if (status === 0) {
+        addBook(newBook).finally(window.location.reload);
+        setNewBook(newData);
+      } else if (status === -1) {
+        message.error("请填写完整信息！", 1);
+        setDisButton(false);
+      } else {
+        message.error("填写信息有误！", 1);
+        setDisButton(false);
+      }
+    }
   };
 
   const defaultColumns: (ColumnTypes[number] & {
@@ -143,15 +234,19 @@ export const StorageView = () => {
   })[] = [
     {
       title: "封面",
-      dataIndex: "pics",
+      dataIndex: "picture",
       width: "15%",
-      //@ts-ignore
-      render: (_, record: { pics: string[] }) => (
+      render: (value, _, index) => (
         <img
-          onClick={() => setShowModal(true)}
+          onClick={() => {
+            setFormUrl(value);
+            setSelectId(index);
+            setShowModal(true);
+            console.log(formUrl);
+          }}
           className={"storage_pic"}
-          alt={record.pics[0]}
-          src={record.pics[0]}
+          alt={""}
+          src={value}
         />
       ),
     },
@@ -167,13 +262,23 @@ export const StorageView = () => {
       editable: true,
     },
     {
+      title: "出版社",
+      dataIndex: "pub",
+      editable: true,
+    },
+    {
+      title: "价格",
+      dataIndex: "price",
+      editable: true,
+    },
+    {
       title: "ISBN",
-      dataIndex: "ISBN",
+      dataIndex: "isbn",
       editable: true,
     },
     {
       title: "库存",
-      dataIndex: "left_number",
+      dataIndex: "stock",
       editable: true,
     },
     {
@@ -181,29 +286,35 @@ export const StorageView = () => {
       dataIndex: "operation",
       // @ts-ignore
       render: (_, record: { id: React.Key }) =>
-        dataSource.length >= 1 ? (
-          <>
-            <Popconfirm
-              title="确定删除?"
-              onConfirm={() => handleDelete(record.id)}
-            >
-              <a>Delete</a>
-            </Popconfirm>
-            {/*@ts-ignore*/}
-          </>
+        dataSource ? (
+          dataSource.length >= 1 ? (
+            <>
+              <Popconfirm
+                title="确定删除?"
+                onConfirm={() => handleDelete(record.id)}
+              >
+                <a>Delete</a>
+              </Popconfirm>
+            </>
+          ) : null
         ) : null,
     },
   ];
 
   const handleSave = (row: Book) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.id === item.id);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
+    if (dataSource) {
+      const newData = [...dataSource];
+      const index = newData.findIndex((item) => row.id === item.id);
+      const item = newData[index];
+      newData.splice(index, 1, {
+        ...item,
+        ...row,
+      });
+      if (item.id === 0) setNewBook(row);
+      else if (!equals(row, item))
+        modBook(row).then(() => message.success("修改成功！"));
+      setDataSource(newData);
+    }
   };
 
   const components = {
@@ -230,25 +341,56 @@ export const StorageView = () => {
   });
 
   const HandleOk = () => {
+    let pic_url = formUrl;
+    if (selectId > 0)
+      modBookPic(selectId, pic_url).catch((err) => console.error(err));
+    else newBook.picture = pic_url;
+    setFormUrl("");
+    setSelectId(-1);
     setShowModal(false);
   };
 
-  return (
-    <div>
-      <div className={"search_bar"}>
-        <BookSearch allData={Books} setFilter={setDataSource} />
+  if (dataSource)
+    return (
+      <div>
+        <div className={"order_title"}>
+          <Title>{"库存"}</Title>
+        </div>
+        <div className={"search_bar"}>
+          <BookSearch allData={dataSource} setFilter={setDataSource} />
+        </div>
+        <Button
+          onClick={handleAdd}
+          type="primary"
+          disabled={!disButton}
+          style={{ marginBottom: 16 }}
+        >
+          {"添加书籍"}
+        </Button>
+        <Button
+          onClick={handleConfirmAdd}
+          disabled={disButton}
+          type="primary"
+          style={{ marginBottom: 16 }}
+        >
+          {"确认修改"}
+        </Button>
+        <Modal
+          title={"书籍图片"}
+          open={showModal}
+          onOk={HandleOk}
+          onCancel={() => setShowModal(false)}
+        >
+          <Input value={formUrl} onChange={(e) => setFormUrl(e.target.value)} />
+        </Modal>
+        <Table
+          components={components}
+          rowClassName={() => "editable-row"}
+          bordered
+          dataSource={dataSource}
+          columns={columns as ColumnTypes}
+        />
       </div>
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-        {"添加书籍"}
-      </Button>
-      <Modal title={"书籍图片"} open={showModal} onOk={HandleOk}></Modal>
-      <Table
-        components={components}
-        rowClassName={() => "editable-row"}
-        bordered
-        dataSource={dataSource}
-        columns={columns as ColumnTypes}
-      />
-    </div>
-  );
+    );
+  else return <></>;
 };

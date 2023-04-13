@@ -1,10 +1,10 @@
 import "../css/BookView.css";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { addCartItem } from "../services/CartService";
-import { createOrder, createOrderDirectly } from "../services/OrderService";
+import { createOrderDirectly } from "../services/OrderService";
 import { useNavigate } from "react-router-dom";
 
-interface AddItem {
+interface Props {
   user_id: number;
   book_id: number;
   stock: number;
@@ -18,7 +18,7 @@ export const AddItem = ({
   stock,
   item_num,
   set_item_num,
-}: AddItem) => {
+}: Props) => {
   const navigation = useNavigate();
 
   function set_num(text: string) {
@@ -57,7 +57,7 @@ export const AddItem = ({
           className={"to_cart"}
           onClick={() => {
             addCartItem(user_id, book_id, item_num)
-              .then(() => alert("加购成功"))
+              .then(() => message.info("加购成功"))
               .then(() => set_num("0"));
           }}
           disabled={!canBuy || !item_num}

@@ -1,43 +1,55 @@
-import { Book, User } from "../../Interface";
-import {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Book, backMsg, User } from "../../Interface";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { AddItem } from "../../components/AddItem";
 import "../../css/BookView.css";
 import { BookViewHeader } from "../../components/BookViewHeader";
 import { useNavigate, useParams } from "react-router-dom";
-import { getBook } from "../../services/BookService";
-import Cookies from "universal-cookie";
-import { getUser } from "../../services/UserService";
+import { get_one_book } from "../../services/BookService";
+import { get_user, getUser } from "../../services/UserService";
+import { Col, message, Row } from "antd";
+import { emptyBook, emptySessionMsg, emptyUser } from "../../emptyData";
+import { check_session } from "../../services/LoginService";
 
 export const BookView = () => {
-  let user_id = 0;
-  const [user, setUser] = useState<User>();
-  const [item_num, set_item_num] = useState(0);
-  const [book, setBook] = useState<Book>();
   const params = useParams();
+  const navigation = useNavigate();
+  const msg_ref = useRef<backMsg>(emptySessionMsg);
+  const [user, setUser] = useState<User>(emptyUser);
+
+  const [book, setBook] = useState<Book>(emptyBook);
+  const [item_num, set_item_num] = useState(0);
+
   useEffect(() => {
     let index = Number(params.id);
-    getBook(index, (data: SetStateAction<Book | undefined>) =>
-      setBook(data)
-    ).catch(console.error);
-  }, [params.id]);
-  useEffect(() => {
-    getUser((data: SetStateAction<User | undefined>) => setUser(data)).then(
-      () => {
-        if (user) {
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-          user_id = user.id;
-        }
-      }
+    get_one_book(index, (data: Book) => setBook(data)).catch((err) =>
+      console.error(err)
     );
-  }, []);
-  if (book) {
+  }, [params.id]);
+
+  useEffect(() => {
+    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
+      if (msg_ref.current.status >= 0) {
+        get_user(msg_ref.current.data.userId, (data: User) =>
+          setUser(data)
+        ).catch((err) => console.error(err));
+      } else {
+        message.error(msg_ref.current.msg).then(() => navigation("/login"));
+      }
+    });
+  }, [navigation]);
+
+  // useEffect(() => {
+  //   getUser((data: User) => {
+  //     user_ref.current = data;
+  //     setUser(data);
+  //   })
+  //     .then(() => {
+  //       if (!user_ref.current) navigation("/login");
+  //     })
+  //     .catch((err) => console.error(err));
+  // }, []);
+
+  if (book && user.id) {
     return (
       <div className={"book_view"}>
         <BookViewHeader book={book} />
@@ -47,7 +59,11 @@ export const BookView = () => {
             <div className={"name_info"}>
               <h1 className={"title"}>{book.title}</h1>
               <p className={"detail"}>{"ISBN: " + book.isbn}</p>
-              <p className={"stock"}>{"库存: " + book.stock}</p>
+              <Row>
+                <p className={"stock"}>{"库存: " + book.stock}</p>
+                <Col span={1}></Col>
+                <p className={"sales"}>{"销量: " + book.sales}</p>
+              </Row>
             </div>
             <div className={"publication"}>
               <span className={"t1"} id={"author"}>
@@ -61,7 +77,7 @@ export const BookView = () => {
             </p>
             <div className={"purchase"}>
               <AddItem
-                user_id={user_id}
+                user_id={user.id}
                 book_id={book.id}
                 stock={book.stock}
                 item_num={item_num}
@@ -80,24 +96,9 @@ interface pic_props {
 }
 
 const PicDisplay = ({ book }: pic_props) => {
-  const [showPic, setShowPic] = useState(book.pics[0].url);
   return (
     <div className={"pic_display"}>
-      <img className={"big_pic"} alt={book.title} src={showPic} />
-      <div className={"pic_slider_box"}>
-        <ul className={"pic_slider"}>
-          {book.pics.map((item) => (
-            <li className={"slider_item"}>
-              <img
-                className={"slider_img"}
-                alt={item.url}
-                src={item.url}
-                onClick={() => setShowPic(item.url)}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <img className={"big_pic"} alt={book.title} src={book.picture} />
     </div>
   );
 };

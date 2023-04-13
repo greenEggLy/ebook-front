@@ -1,5 +1,5 @@
-import { Book, OrderItem } from "../Interface";
-import { Button, Table } from "antd";
+import { Book, CartItem, OrderItem } from "../Interface";
+import { Table } from "antd";
 import React from "react";
 import { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 // import { cart_columns } from "../views/CartView";
 
 interface Props {
-  cartList: OrderItem[];
+  cartList: CartItem[];
 }
 
 export const UserCartList = ({ cartList }: Props) => {
@@ -22,19 +22,7 @@ export const UserCartList = ({ cartList }: Props) => {
   );
 };
 
-export const UserBoughtList = ({ cartList }: Props) => {
-  return (
-    <Table
-      className={"table"}
-      size={"large"}
-      pagination={{ pageSize: 2 }}
-      columns={bought_columns}
-      dataSource={cartList}
-    ></Table>
-  );
-};
-
-const cart_columns: ColumnsType<OrderItem> = [
+const cart_columns: ColumnsType<CartItem> = [
   {
     title: "书本图片",
     dataIndex: "book",
@@ -43,7 +31,7 @@ const cart_columns: ColumnsType<OrderItem> = [
     render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
-          <img alt={book.pics[0].url} src={book.pics[0].url} />
+          <img alt={book.picture} src={book.picture} />
         </Link>
       </div>
     ),
@@ -94,7 +82,7 @@ const bought_columns: ColumnsType<OrderItem> = [
     render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
-          <img alt={book.pics[0].url} src={book.pics[0].url} />
+          <img alt={book.picture} src={book.picture} />
         </Link>
       </div>
     ),

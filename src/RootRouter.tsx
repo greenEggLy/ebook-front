@@ -1,22 +1,14 @@
 import React from "react";
-import {
-  BrowserRouter,
-  Route,
-  Routes,
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { HomeView } from "./views/user_views/HomeView";
+import { Route, Routes } from "react-router-dom";
+import { HomeView } from "./views/HomeView";
 import { CartView } from "./views/user_views/CartView";
 import { UserView } from "./views/user_views/UserView";
 import { BookView } from "./views/user_views/BookView";
 import { ErrorView } from "./views/ErrorView";
 import { BooksView } from "./views/user_views/BooksView";
 import { LoginView, SignupView } from "./views/LoginView";
-import { User } from "./Interface";
 import { StorageView } from "./views/admin_views/StorageView";
 import { OrdersView_admin } from "./views/admin_views/OrdersView_admin";
-import { Statistic } from "antd";
 import { StatView } from "./views/admin_views/StatView";
 import { ManUserView } from "./views/admin_views/ManUserView";
 import { OrdersView } from "./views/user_views/OrdersView";

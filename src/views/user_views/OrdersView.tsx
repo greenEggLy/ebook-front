@@ -1,41 +1,63 @@
-import { Book, Order, OrderItem, User } from "../../Interface";
-import React, { useEffect, useState } from "react";
+import { Order, OrderItem, backMsg, User } from "../../Interface";
+import React, { useEffect, useRef, useState } from "react";
 import { ColumnsType } from "antd/es/table";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Typography } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { message, Typography } from "antd";
 import { OrderSearch } from "../../components/SearchBar";
 import { OrderList } from "../../components/OrderList";
 import "../../css/OrdersView.css";
-import { getUser } from "../../services/UserService";
-import { getUserOrders } from "../../services/OrderService";
+import { get_user } from "../../services/UserService";
+import { get_orders_by_user } from "../../services/OrderService";
+import { emptySessionMsg, emptyUser } from "../../emptyData";
+import { check_session } from "../../services/LoginService";
 
 const { Title } = Typography;
-
-interface Props {
-  user: User;
-}
 
 export const OrdersView = () => {
   // const location = useLocation();
   const navigation = useNavigate();
-  const [user, setUser] = useState<User>();
-  const [allOrder, setAllOrder] = useState<Order[]>();
-  const [filterOrders, setFilterOrders] = useState<Order[]>();
+  const [user, setUser] = useState<User>(emptyUser);
+  const msg_ref = useRef<backMsg>(emptySessionMsg);
+  const [allOrder, setAllOrder] = useState<Order[]>([]);
+  const [filterOrders, setFilterOrders] = useState<Order[]>([]);
+  // useEffect(() => {
+  //   getUser((data: User) => {
+  //     setUser(data);
+  //     user_ref.current = data;
+  //   })
+  //     .then(() => {
+  //       if (!user_ref.current) navigation("/login");
+  //     })
+  //     .catch((err) => console.error(err));
+  // }, [navigation]);
+
   useEffect(() => {
-    getUser((data: React.SetStateAction<User | undefined>) =>
-      setUser(data)
-    ).catch(console.error);
+    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
+      if (msg_ref.current.status >= 0) {
+        get_user(msg_ref.current.data.userId, (data: User) =>
+          setUser(data)
+        ).catch((err) => console.error(err));
+      } else {
+        message.error(msg_ref.current.msg).then(() => navigation("/login"));
+      }
+    });
   }, [navigation]);
+
   useEffect(() => {
-    if (user) {
-      getUserOrders(
-        user.id,
-        (data: React.SetStateAction<Order[] | undefined>) => setAllOrder(data),
-        (data: React.SetStateAction<Order[] | undefined>) =>
-          setFilterOrders(data)
-      ).catch(console.error);
+    if (user.id) {
+      console.table(user);
+      get_orders_by_user(user.id, (data: Order[]) => {
+        data = data.sort((a, b) => {
+          if (a.time > b.time) return -1;
+          if (a.time < b.time) return 1;
+          return 0;
+        });
+        setAllOrder(data);
+        setFilterOrders(data);
+      }).catch((err) => console.error(err));
     }
   }, [user]);
+
   const order_columns: ColumnsType<OrderItem> = [
     {
       title: "图片",
@@ -45,7 +67,7 @@ export const OrdersView = () => {
       render: (value, record) => (
         <div className={"order_pic"}>
           <Link to={"/book/" + record.book.id}>
-            <img alt={record.book.pics[0].url} src={record.book.pics[0].url} />
+            <img alt={record.book.picture} src={record.book.picture} />
           </Link>
         </div>
       ),
@@ -83,7 +105,7 @@ export const OrdersView = () => {
       render: (value, record) => <p>{record.number * record.book.price}</p>,
     },
   ];
-  if (!user) return <></>;
+  if (!user.id) return <></>;
   if (!filterOrders || !allOrder) return <></>;
   return (
     <div className={"order"}>

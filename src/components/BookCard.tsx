@@ -15,7 +15,7 @@ export function BookCard({ book }: Props) {
     <Card
       className={"card"}
       hoverable={true}
-      cover={<img className={"card_img"} alt="pic" src={book.pics[0].url} />}
+      cover={<img className={"card_img"} alt="pic" src={book.picture} />}
     >
       <Meta title={book.title} description={"￥" + book.price.toString()} />
     </Card>

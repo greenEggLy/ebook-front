@@ -1,4 +1,3 @@
-import { Users } from "../data";
 import Cookies from "universal-cookie";
 
 export function setExpireDate(ex_days: number) {

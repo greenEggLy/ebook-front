@@ -1,14 +1,10 @@
 import { apiUrl } from "../config-overrides";
-import { postRequest_1, postRequest_2, setRequest } from "../utils/ajax";
+import { getRequest, postRequest } from "../utils/ajax";
 
-export const getUserCart = async (
-  user_id: number | undefined,
-  callback: any,
-  callback2: any
-) => {
+export const get_cart_by_user = async (user_id: number, callback: any) => {
   if (user_id !== undefined) {
-    const url = apiUrl + "/getUserCart?user_id=" + user_id.toString();
-    await postRequest_2(url, callback, callback2);
+    const url = apiUrl + "/cart/get/" + user_id.toString();
+    await getRequest(url, callback);
   }
 };
 
@@ -17,9 +13,9 @@ export const getCartItems = async (
   callback: any
 ) => {
   if (cartItem_ids) {
-    const prefix = "cartItem_ids=";
+    const prefix = "id=";
     let is_first = true;
-    let url = apiUrl + "/getCartItems";
+    let url = apiUrl + "/cart/get-items";
     const id = cartItem_ids[Symbol.iterator]();
     for (let i = 0; i < cartItem_ids.size; i++) {
       if (is_first) {
@@ -27,8 +23,8 @@ export const getCartItems = async (
         url += "?" + prefix + id.next().value;
       } else url += "&" + prefix + id.next().value;
     }
-    console.log(url);
-    await postRequest_1(url, callback);
+    // console.log(url);
+    await getRequest(url, callback);
   }
 };
 
@@ -37,31 +33,31 @@ export const addCartItem = async (
   book_id: number,
   num: number
 ) => {
-  let url = apiUrl + "/addCart";
+  let url = apiUrl + "/cart/add";
   url += "?user_id=" + user_id.toString();
   url += "&book_id=" + book_id.toString();
   url += "&num=" + num.toString();
-  console.log(url);
-  await setRequest(url);
+  // console.log(url);
+  await postRequest(url);
 };
 
 export const minusCartItemNum = async (item_id: number, num: number) => {
-  let url = apiUrl + "/minusCartNum";
+  let url = apiUrl + "/cart/minus-num";
   url += "?item_id=" + item_id.toString();
   url += "&num=" + num.toString();
-  await setRequest(url);
+  await postRequest(url);
 };
 
 export const addCartItemNum = async (item_id: number, num: number) => {
-  let url = apiUrl + "/addCartNum";
+  let url = apiUrl + "/cart/add-num";
   url += "?item_id=" + item_id.toString();
   url += "&num=" + num.toString();
-  await setRequest(url);
+  await postRequest(url);
 };
 
 export const deleteCartItem = async (item_id: number) => {
-  let url = apiUrl + "/deleteCart";
+  let url = apiUrl + "/cart/delete";
   url += "?item_id=" + item_id.toString();
-  console.log(url);
-  await setRequest(url);
+  // console.log(url);
+  await postRequest(url);
 };

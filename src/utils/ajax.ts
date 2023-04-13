@@ -1,26 +1,13 @@
-import { optGET, optPOST } from "../config-overrides";
+import { getRequestInit, postRequestInit } from "../config-overrides";
 
-export let postRequest_2 = async (
-  url: string,
-  callback: any,
-  callback2: any
-) => {
-  await fetch(url, optGET)
-    .then((response) => response.json())
-    .then((data) => {
-      callback(data);
-      callback2(data);
-    });
-};
-
-export let postRequest_1 = async (url: string, callback: any) => {
-  await fetch(url, optGET)
+export let getRequest = async (url: string, callback: any) => {
+  await fetch(url, getRequestInit)
     .then((response) => response.json())
     .then((data) => {
       callback(data);
     });
 };
 
-export let setRequest = async (url: string) => {
-  await fetch(url, optPOST);
+export let postRequest = async (url: string) => {
+  await fetch(url, postRequestInit);
 };

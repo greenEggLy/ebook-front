@@ -1,54 +1,67 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Checkbox, Table, Space, Button, Row, Col, Typography } from "antd";
+import React, { useEffect, useRef, useState } from "react";
+import { Button, Checkbox, Col, message, Row, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { Book, CartItem, OrderItem, User } from "../../Interface";
+import { Book, CartItem, backMsg, User } from "../../Interface";
+import { Link, useNavigate } from "react-router-dom";
+import { CartSearch } from "../../components/SearchBar";
 import "../../css/CartView.css";
 import "../../css/BooksView.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { CartSearch } from "../../components/SearchBar";
 import {
-  addCartItem,
   addCartItemNum,
   deleteCartItem,
-  getUserCart,
+  get_cart_by_user,
   minusCartItemNum,
 } from "../../services/CartService";
-import { postRequest_1 } from "../../utils/ajax";
-import { getUser } from "../../services/UserService";
+import { get_user, getUser } from "../../services/UserService";
+import { emptySessionMsg, emptyUser } from "../../emptyData";
+import { check_session } from "../../services/LoginService";
 
 const { Title } = Typography;
 
-interface Props {
-  user: User;
-}
-
 export const CartView = () => {
-  // const navigation = useNavigate();
-  const [user, setUser] = useState<User>();
-  const [allCart, setAllCart] = useState<CartItem[]>();
-  const [filterCart, setFilterCart] = useState<CartItem[]>();
+  const navigation = useNavigate();
+  const [user, setUser] = useState<User>(emptyUser);
+  const msg_ref = useRef<backMsg>(emptySessionMsg);
+  const [allCart, setAllCart] = useState<CartItem[]>([]);
+  const [filterCart, setFilterCart] = useState<CartItem[]>([]);
   const [chooseGood, setChooseGood] = useState<Set<number>>(new Set<number>());
 
+  // useEffect(() => {
+  //   getUser((data: User) => {
+  //     user_ref.current = data;
+  //     setUser(data);
+  //   }).then(() => {
+  //     if (!user_ref.current) {
+  //       navigation("/login");
+  //     }
+  //   });
+  // }, []);
   useEffect(() => {
-    getUser((data: React.SetStateAction<User | undefined>) => setUser(data));
-  }, []);
+    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
+      if (msg_ref.current.status >= 0) {
+        get_user(msg_ref.current.data.userId, (user: User) =>
+          setUser(user)
+        ).catch((err) => console.error(err));
+      } else {
+        message.error(msg_ref.current.msg).then(() => navigation("/login"));
+      }
+    });
+  }, [navigation]);
+
   useEffect(() => {
     if (user)
-      getUserCart(
-        user.id,
-        (data: React.SetStateAction<CartItem[] | undefined>) =>
-          setAllCart(data),
-        (data: React.SetStateAction<CartItem[] | undefined>) =>
-          setFilterCart(data)
-      ).catch(console.error);
+      get_cart_by_user(user.id, (data: CartItem[]) => {
+        setAllCart(data);
+        setFilterCart(data);
+      }).catch((err) => console.error(err));
   }, [user]);
 
-  const cart_columns: ColumnsType<OrderItem> = [
+  const cart_columns: ColumnsType<CartItem> = [
     {
       title: "",
       key: "book_choose",
       width: "5%",
-      render: (value: OrderItem) => (
+      render: (value: CartItem) => (
         <Checkbox
           onChange={(e) => {
             if (e.target.checked) chooseGood.add(value.id);
@@ -65,7 +78,7 @@ export const CartView = () => {
       render: (book: Book) => (
         <div className={"cart_pic"}>
           <Link to={"/book/" + book.id}>
-            <img alt={book.pics[0].url} src={book.pics[0].url} />
+            <img alt={book.picture} src={book.picture} />
           </Link>
         </div>
       ),
@@ -104,13 +117,10 @@ export const CartView = () => {
             onClick={() => {
               minusCartItemNum(record.id, 1).then(() => {
                 if (user)
-                  getUserCart(
-                    user.id,
-                    (data: React.SetStateAction<CartItem[] | undefined>) =>
-                      setAllCart(data),
-                    (data: React.SetStateAction<CartItem[] | undefined>) =>
-                      setFilterCart(data)
-                  ).then(window.location.reload);
+                  get_cart_by_user(user.id, (data: CartItem[]) => {
+                    setAllCart(data);
+                    setFilterCart(data);
+                  }).then(window.location.reload);
               });
             }}
           >
@@ -122,13 +132,10 @@ export const CartView = () => {
             onClick={() => {
               addCartItemNum(record.id, 1).then(() => {
                 if (user)
-                  getUserCart(
-                    user.id,
-                    (data: React.SetStateAction<CartItem[] | undefined>) =>
-                      setAllCart(data),
-                    (data: React.SetStateAction<CartItem[] | undefined>) =>
-                      setFilterCart(data)
-                  ).then(window.location.reload);
+                  get_cart_by_user(user.id, (data: CartItem[]) => {
+                    setAllCart(data);
+                    setFilterCart(data);
+                  }).then(window.location.reload);
               });
             }}
           >
@@ -147,13 +154,10 @@ export const CartView = () => {
           onClick={() => {
             deleteCartItem(record.id).then(() => {
               if (user)
-                getUserCart(
-                  user.id,
-                  (data: React.SetStateAction<CartItem[] | undefined>) =>
-                    setAllCart(data),
-                  (data: React.SetStateAction<CartItem[] | undefined>) =>
-                    setFilterCart(data)
-                ).then(window.location.reload);
+                get_cart_by_user(user.id, (data: CartItem[]) => {
+                  setAllCart(data);
+                  setFilterCart(data);
+                }).then(window.location.reload);
             });
           }}
         >
@@ -174,14 +178,19 @@ export const CartView = () => {
         <Table columns={cart_columns} dataSource={filterCart}></Table>
         <Row>
           <Col span={21} />
-          <Link
-            to={"/checkOrder"}
-            state={{ goods: chooseGood, user_id: user.id }}
+          <Button
+            className={"buy_button"}
+            onClick={() => {
+              if (!chooseGood.size) message.info("请选择购买物品");
+              else {
+                navigation("/checkOrder", {
+                  state: { goods: chooseGood, user_id: user.id },
+                });
+              }
+            }}
           >
-            <Button className={"buy_button"} disabled={!chooseGood.size}>
-              {"购买"}
-            </Button>
-          </Link>
+            {"购买"}
+          </Button>
         </Row>
       </div>
     );

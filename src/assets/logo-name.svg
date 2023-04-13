@@ -1,7 +1,9 @@
 <svg width="800" height="600" xmlns="http://www.w3.org/2000/svg">
 
- <g>
-  <title>Layer 1</title>
-  <text style="cursor: move;" transform="matrix(4.00968 0 0 4.28111 -788.647 -858.593)" stroke="#000" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Hahmlet'" font-size="24" id="svg_1" y="280.06532" x="200.55868" stroke-width="0" fill="#ffffff">EBOOK STORE</text>
- </g>
+    <g>
+        <title>Layer 1</title>
+        <text style="cursor: move;" transform="matrix(4.00968 0 0 4.28111 -788.647 -858.593)" stroke="#000"
+              font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Hahmlet'" font-size="24"
+              id="svg_1" y="280.06532" x="200.55868" stroke-width="0" fill="#ffffff">EBOOK STORE</text>
+    </g>
 </svg>
