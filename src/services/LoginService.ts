@@ -2,7 +2,7 @@ import {
   apiUrl,
   postJSONRequestInit,
   postRequestInit,
-} from "../config-overrides";
+} from "../utils/global_config";
 import { message } from "antd";
 import { backMsg, LogInForm, SignUpForm } from "../Interface";
 
@@ -25,7 +25,6 @@ export const login = async (
 };
 
 export const check_session = async (callback: any) => {
-  // set sessionMsg
   let username = localStorage.getItem("user");
   if (username === null) {
     message.error("尚未登陆！");
@@ -33,11 +32,9 @@ export const check_session = async (callback: any) => {
     return;
   }
   const url = apiUrl + "/session/check";
-  console.log(url);
   await fetch(url, postRequestInit)
     .then((response) => response.json())
     .then((data) => {
-      console.table(data);
       callback(data);
     });
 };

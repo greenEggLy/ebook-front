@@ -38,17 +38,6 @@ export const BookView = () => {
     });
   }, [navigation]);
 
-  // useEffect(() => {
-  //   getUser((data: User) => {
-  //     user_ref.current = data;
-  //     setUser(data);
-  //   })
-  //     .then(() => {
-  //       if (!user_ref.current) navigation("/login");
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, []);
-
   if (book && user.id) {
     return (
       <div className={"book_view"}>

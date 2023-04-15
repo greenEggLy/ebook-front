@@ -57,7 +57,7 @@ export const AddItem = ({
           className={"to_cart"}
           onClick={() => {
             addCartItem(user_id, book_id, item_num)
-              .then(() => message.info("加购成功"))
+              .then(() => message.info("加购成功", 0.5))
               .then(() => set_num("0"));
           }}
           disabled={!canBuy || !item_num}

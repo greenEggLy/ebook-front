@@ -103,7 +103,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
       toggleEdit();
       handleSave({ ...record, ...values });
     } catch (errInfo) {
-      // console.log("Save failed:", errInfo);
+      console.error(errInfo);
     }
   };
 
@@ -145,7 +145,8 @@ export const StorageView = () => {
   const navigation = useNavigate();
   const msg_ref = useRef<backMsg>(emptySessionMsg);
 
-  const [dataSource, setDataSource] = useState<Book[]>();
+  const [dataSource, setDataSource] = useState<Book[]>([]);
+  const [filterData, setFilterData] = useState<Book[]>([]);
   const [showModal, setShowModal] = useState(false);
 
   const [disButton, setDisButton] = useState(true);
@@ -159,9 +160,10 @@ export const StorageView = () => {
         if (msg_ref.current.data.userType < 1)
           message.error("没有管理员权限！").then(() => navigation("/"));
         else {
-          get_all_books((data: Book[]) => setDataSource(data)).catch((err) =>
-            console.error(err)
-          );
+          get_all_books((data: Book[]) => {
+            setDataSource(data);
+            setFilterData(data);
+          }).catch((err) => console.error(err));
         }
       } else {
         message.error(msg_ref.current.msg).then(() => navigation("/login"));
@@ -170,7 +172,7 @@ export const StorageView = () => {
   }, [navigation]);
 
   const handleDelete = (key: React.Key) => {
-    if (dataSource) {
+    if (dataSource.length) {
       const newData = dataSource.filter((item) => item.id !== key);
       if (key > 0) delBook(key).catch((err) => console.error(err));
       if (key === 0) setDisButton(true);
@@ -205,14 +207,14 @@ export const StorageView = () => {
   };
 
   const handleAdd = () => {
-    if (dataSource) {
+    if (dataSource.length) {
       setDataSource([newData, ...dataSource]);
       setNewBook(newData);
       setDisButton(false);
     }
   };
   const handleConfirmAdd = () => {
-    if (dataSource) {
+    if (dataSource.length) {
       setDisButton(true);
       let status = canAdd();
       if (status === 0) {
@@ -242,7 +244,6 @@ export const StorageView = () => {
             setFormUrl(value);
             setSelectId(index);
             setShowModal(true);
-            console.log(formUrl);
           }}
           className={"storage_pic"}
           alt={""}
@@ -357,7 +358,7 @@ export const StorageView = () => {
           <Title>{"库存"}</Title>
         </div>
         <div className={"search_bar"}>
-          <BookSearch allData={dataSource} setFilter={setDataSource} />
+          <BookSearch allData={dataSource} setFilter={setFilterData} />
         </div>
         <Button
           onClick={handleAdd}
@@ -387,7 +388,7 @@ export const StorageView = () => {
           components={components}
           rowClassName={() => "editable-row"}
           bordered
-          dataSource={dataSource}
+          dataSource={filterData}
           columns={columns as ColumnTypes}
         />
       </div>

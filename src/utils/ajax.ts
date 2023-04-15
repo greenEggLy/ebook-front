@@ -1,4 +1,4 @@
-import { getRequestInit, postRequestInit } from "../config-overrides";
+import { getRequestInit, postRequestInit } from "./global_config";
 
 export let getRequest = async (url: string, callback: any) => {
   await fetch(url, getRequestInit)

@@ -8,14 +8,16 @@ import { Link } from "react-router-dom";
 
 interface Props {
   user: User;
+  collapsed: boolean;
 }
 
-export const HomeHeader = ({ user }: Props) => {
+export const HomeHeader = ({ user, collapsed }: Props) => {
   return (
     <div id="header">
       <div id="header-content">
         <Row>
-          <Col span={20}>
+          <Col span={collapsed ? 1 : 3} />
+          <Col span={collapsed ? 18 : 16}>
             <Space className={"header_title"}>
               <Link to={"/"}>
                 <img

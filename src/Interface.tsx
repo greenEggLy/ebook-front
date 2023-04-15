@@ -33,12 +33,12 @@ export interface Order {
 }
 
 export interface Stat_Sales {
-  bookName: string;
+  book_name: string;
   sales: number;
 }
 
 export interface Stat_Money {
-  bookName: string;
+  book_name: string;
   money: number;
 }
 

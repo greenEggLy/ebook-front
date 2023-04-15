@@ -25,17 +25,40 @@ interface Props {
   max_number: number;
 }
 
+const options = {
+  indexAxis: "y" as const,
+  elements: {
+    bar: {
+      borderWidth: 2,
+    },
+  },
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "right" as const,
+    },
+    title: {
+      display: true,
+      text: "销量统计",
+    },
+  },
+};
 export const BarChart_Sales = ({ sales_data, max_number }: Props) => {
-  let labels: string[] = [];
-  let data_: number[] = [];
-  for (let i = 0; i < max_number && i < sales_data.length; i++) {
-    labels.push(sales_data[i].bookName);
-    data_.push(sales_data[i].sales);
-  }
-  labels = ["1", "2", "3", "4", "5"];
-  data_ = [3, 12, 4, 9, 5];
+  const [labels_, setLabels] = useState<string[]>([]);
+  const [data_, setData] = useState<number[]>([]);
+  useEffect(() => {
+    let tmp_labels: string[] = [];
+    let tmp_data: number[] = [];
+    for (let i = 0; i < max_number && i < sales_data.length; i++) {
+      tmp_labels.push(sales_data[i].book_name);
+      tmp_data.push(sales_data[i].sales);
+    }
+    setLabels(tmp_labels);
+    setData(tmp_data);
+  }, [max_number, sales_data]);
+
   const data = {
-    label: labels,
+    labels: labels_,
     datasets: [
       {
         label: "销量",
@@ -45,25 +68,6 @@ export const BarChart_Sales = ({ sales_data, max_number }: Props) => {
       },
     ],
   };
-  const options = {
-    indexAxis: "y" as const,
-    elements: {
-      bar: {
-        borderWidth: 2,
-      },
-    },
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "right" as const,
-      },
-      title: {
-        display: true,
-        text: "销量统计",
-      },
-    },
-  };
-
   return (
     <div style={{ width: "60%", position: "relative" }}>
       <Bar data={data} options={options} />
@@ -77,23 +81,22 @@ interface Props_2 {
 }
 
 export const BarChart_Money = ({ money_data, max_number }: Props_2) => {
-  let tmp_labels: string[] = [];
-  let data_: number[] = [];
   const [labels, setLabels] = useState<string[]>([]);
   const [money, setMoney] = useState<number[]>([]);
+
   useEffect(() => {
+    let tmp_labels: string[] = [];
+    let data_: number[] = [];
     for (let i = 0; i < max_number && i < money_data.length; i++) {
-      tmp_labels.push(money_data[i].bookName);
+      tmp_labels.push(money_data[i].book_name);
       data_.push(money_data[i].money);
     }
     setLabels(tmp_labels);
     setMoney(data_);
-    console.table(labels);
-    console.table(money);
   }, [money_data, max_number]);
 
   const data = {
-    label: labels,
+    labels: labels,
     datasets: [
       {
         label: "销售额",

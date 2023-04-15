@@ -20,7 +20,7 @@ export const SubmitOrderView = () => {
         </Col>
         <Col span={8} />
         <Col span={8}>
-          <Link className={"to_order"} to={"/"}>
+          <Link className={"to_order"} to={"/booklist"}>
             <p>{"点此返回主页"}</p>
           </Link>
         </Col>

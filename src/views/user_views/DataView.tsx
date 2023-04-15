@@ -1,31 +1,32 @@
-import { DatePicker, message, Tabs, TabsProps, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { backMsg, Stat_Money, Stat_Sales, User } from "../../Interface";
-import { getUser } from "../../services/UserService";
-import { useNavigate } from "react-router-dom";
+import { emptySessionMsg, emptyUser } from "../../emptyData";
+import { check_session } from "../../services/LoginService";
+import { get_user } from "../../services/UserService";
+import { DatePicker, message, Typography } from "antd";
+import dayjs from "dayjs";
+import { date_back, date_forward } from "../../utils/DateUtil";
 import {
   get_sorted_money_all,
+  get_sorted_money_one,
   get_sorted_sales_all,
+  get_sorted_sales_one,
 } from "../../services/OrderService";
-import moment from "moment";
+import moment from "moment/moment";
+import { StatTab } from "../../components/StatTab";
 import {
   BarChart_Money,
   BarChart_Sales,
 } from "../../components/BarChart_Sales";
-import { check_session } from "../../services/LoginService";
-import { emptySessionMsg } from "../../emptyData";
-import { date_back, date_forward } from "../../utils/DateUtil";
-import dayjs from "dayjs";
-import { StatTab } from "../../components/StatTab";
 
 const { Title } = Typography;
-
 const { RangePicker } = DatePicker;
 
-export const StatView = () => {
+export const DataView = () => {
   const navigation = useNavigate();
+  const [user, setUser] = useState<User>(emptyUser);
   const msg_ref = useRef<backMsg>(emptySessionMsg);
-
   const [isDiy, setIsDiy] = useState<boolean>(false);
   const [laterDate, setLaterDate] = useState<Date>(new Date());
   const [earlierDate, setEarlierDate] = useState<Date>(new Date());
@@ -36,12 +37,12 @@ export const StatView = () => {
   useEffect(() => {
     check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
       if (msg_ref.current.status >= 0) {
-        if (msg_ref.current.data.userType < 1)
-          message.error("没有管理员权限！").then(() => navigation("/"));
-        else {
+        get_user(msg_ref.current.data.userId, (user: User) =>
+          setUser(user)
+        ).then(() => {
           setEarlierDate(date_back(7));
-          setLaterDate(date_back(0));
-        }
+          setLaterDate(date_back(1));
+        });
       } else {
         message.error(msg_ref.current.msg).then(() => navigation("/login"));
       }
@@ -49,24 +50,26 @@ export const StatView = () => {
   }, [navigation]);
 
   useEffect(() => {
-    if (earlierDate && laterDate) {
-      get_sorted_sales_all(
+    if (earlierDate && laterDate && user.id) {
+      get_sorted_sales_one(
+        user.id,
         moment(earlierDate).format("YYYY-MM-DD"),
         moment(laterDate).format("YYYY-MM-DD"),
         (data: Stat_Sales[]) => setSalesFilter(data)
       ).then(window.location.reload);
     }
-  }, [earlierDate, laterDate]);
+  }, [earlierDate, laterDate, user.id]);
 
   useEffect(() => {
-    if (earlierDate && laterDate) {
-      get_sorted_money_all(
+    if (earlierDate && laterDate && user.id) {
+      get_sorted_money_one(
+        user.id,
         moment(earlierDate).format("YYYY-MM-DD"),
         moment(laterDate).format("YYYY-MM-DD"),
         (data: Stat_Money[]) => setMoneyFilter(data)
       ).then(window.location.reload);
     }
-  }, [earlierDate, laterDate]);
+  }, [earlierDate, laterDate, user.id]);
 
   return (
     <div>

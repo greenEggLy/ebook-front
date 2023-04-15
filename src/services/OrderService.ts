@@ -1,4 +1,4 @@
-import { apiUrl, postRequestInit } from "../config-overrides";
+import { apiUrl, postRequestInit } from "../utils/global_config";
 import { getRequest, postRequest } from "../utils/ajax";
 import { CartItem, Stat_Sales } from "../Interface";
 
@@ -14,7 +14,7 @@ export const getAllOrder = async (callback: any) => {
   await getRequest(url, callback);
 };
 
-export const get_sorted_sales_bet_date = async (
+export const get_sorted_sales_all = async (
   earlier: string,
   later: string,
   callback: any
@@ -30,7 +30,26 @@ export const get_sorted_sales_bet_date = async (
     .then((data: Stat_Sales) => callback(data));
 };
 
-export const get_sorted_money_between_date = async (
+export const get_sorted_sales_one = async (
+  user_id: number,
+  earlier: string,
+  later: string,
+  callback: any
+) => {
+  const url =
+    apiUrl +
+    "/order/get/sales/time/between/" +
+    user_id.toString() +
+    "?earlier=" +
+    earlier +
+    "&later=" +
+    later;
+  await fetch(url, postRequestInit)
+    .then((response) => response.json())
+    .then((data: Stat_Sales) => callback(data));
+};
+
+export const get_sorted_money_all = async (
   earlier: string,
   later: string,
   callback: any
@@ -44,6 +63,25 @@ export const get_sorted_money_between_date = async (
   await getRequest(url2, callback);
 };
 
+export const get_sorted_money_one = async (
+  user_id: number,
+  earlier: string,
+  later: string,
+  callback: any
+) => {
+  const url =
+    apiUrl +
+    "/order/get/money/time/between/" +
+    user_id.toString() +
+    "?earlier=" +
+    earlier +
+    "&later=" +
+    later;
+  await fetch(url, postRequestInit)
+    .then((response) => response.json())
+    .then((data: Stat_Sales) => callback(data));
+};
+
 export const createOrder = async (
   user_id: number,
   items: CartItem[] | undefined
@@ -53,7 +91,6 @@ export const createOrder = async (
     for (let item of items) {
       url += "&item_id=" + item.id.toString();
     }
-    // console.log(url);
     await postRequest(url);
   }
 };
@@ -71,6 +108,5 @@ export const createOrderDirectly = async (
     book_id.toString() +
     "&num=" +
     num.toString();
-  // console.log(url);
   await postRequest(url);
 };

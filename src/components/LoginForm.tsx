@@ -76,6 +76,7 @@ export const SignUpForm = () => {
     const password = form.getFieldValue(["password"]);
     const email = form.getFieldValue(["email"]);
     let msg: backMsg;
+    if (!username || !password || !email) return;
     signup(username, email, password, (data: backMsg) => (msg = data)).then(
       () => {
         if (msg.status >= 0) {
@@ -147,6 +148,11 @@ export const SignUpForm = () => {
       >
         <Input placeholder={"Email Address"} />
       </Form.Item>
+
+      <Link to={"/login"}>
+        <p>{"已有账户？登录"}</p>
+      </Link>
+
       <Form.Item>
         <Button className={"submit"} type="primary" htmlType="submit">
           Sign up

@@ -1,5 +1,5 @@
 import { getRequest, postRequest } from "../utils/ajax";
-import { apiUrl, postJSONRequestInit } from "../config-overrides";
+import { apiUrl, postJSONRequestInit } from "../utils/global_config";
 import React from "react";
 import { Book } from "../Interface";
 

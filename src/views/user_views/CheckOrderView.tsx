@@ -14,7 +14,6 @@ export const CheckOrderView = () => {
   const user_id = location.state.user_id;
   const [goods, setGoods] = useState<CartItem[]>();
   let whole_price: React.MutableRefObject<number> = useRef<number>(0);
-  // console.log(cartItem_ids);
   useEffect(() => {
     getCartItems(
       cartItem_ids,

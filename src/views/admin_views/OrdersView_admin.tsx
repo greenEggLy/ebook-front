@@ -29,7 +29,6 @@ export const OrdersView_admin = () => {
             });
             setAllOrder(data);
             setFilterOrders(data);
-            console.table(data);
           }).catch((err) => console.error(err));
         }
       } else {

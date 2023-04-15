@@ -1,4 +1,4 @@
-import { apiUrl } from "../config-overrides";
+import { apiUrl } from "../utils/global_config";
 
 export const addPic = async (book_id: number, pic_url: string) => {
   let url = apiUrl + "/addPic";

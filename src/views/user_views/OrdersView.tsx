@@ -20,16 +20,6 @@ export const OrdersView = () => {
   const msg_ref = useRef<backMsg>(emptySessionMsg);
   const [allOrder, setAllOrder] = useState<Order[]>([]);
   const [filterOrders, setFilterOrders] = useState<Order[]>([]);
-  // useEffect(() => {
-  //   getUser((data: User) => {
-  //     setUser(data);
-  //     user_ref.current = data;
-  //   })
-  //     .then(() => {
-  //       if (!user_ref.current) navigation("/login");
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, [navigation]);
 
   useEffect(() => {
     check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
@@ -45,11 +35,10 @@ export const OrdersView = () => {
 
   useEffect(() => {
     if (user.id) {
-      console.table(user);
       get_orders_by_user(user.id, (data: Order[]) => {
         data = data.sort((a, b) => {
-          if (a.time > b.time) return -1;
-          if (a.time < b.time) return 1;
+          if (a.id > b.id) return -1;
+          if (a.id < b.id) return 1;
           return 0;
         });
         setAllOrder(data);

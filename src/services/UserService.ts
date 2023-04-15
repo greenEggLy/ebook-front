@@ -1,4 +1,4 @@
-import { apiUrl, postJSONRequestInit } from "../config-overrides";
+import { apiUrl, postJSONRequestInit } from "../utils/global_config";
 import { getRequest, postRequest } from "../utils/ajax";
 import { ManUserInfo, backMsg, UserUinfo } from "../Interface";
 import { check_session } from "./LoginService";
@@ -57,7 +57,6 @@ export const get_all_users = async (callback: any) => {
 export const mod_user_info = async (user_info: ManUserInfo) => {
   let url = apiUrl + "/user/info/mod";
   const json = JSON.stringify(user_info);
-  console.log(json);
   await fetch(url, postJSONRequestInit(json));
 };
 

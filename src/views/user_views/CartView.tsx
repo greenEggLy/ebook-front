@@ -26,16 +26,6 @@ export const CartView = () => {
   const [filterCart, setFilterCart] = useState<CartItem[]>([]);
   const [chooseGood, setChooseGood] = useState<Set<number>>(new Set<number>());
 
-  // useEffect(() => {
-  //   getUser((data: User) => {
-  //     user_ref.current = data;
-  //     setUser(data);
-  //   }).then(() => {
-  //     if (!user_ref.current) {
-  //       navigation("/login");
-  //     }
-  //   });
-  // }, []);
   useEffect(() => {
     check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
       if (msg_ref.current.status >= 0) {

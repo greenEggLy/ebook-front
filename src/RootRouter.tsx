@@ -14,6 +14,7 @@ import { ManUserView } from "./views/admin_views/ManUserView";
 import { OrdersView } from "./views/user_views/OrdersView";
 import { CheckOrderView } from "./views/user_views/CheckOrderView";
 import { SubmitOrderView } from "./views/user_views/SubmitOrderView";
+import { DataView } from "./views/user_views/DataView";
 
 export const RootRouter = () => {
   return (
@@ -30,8 +31,8 @@ export const RootRouter = () => {
           <Route path={"/order"} element={<OrdersView />} />,
           <Route path={"/user"} element={<UserView />} />,
           <Route path={"/book/:id"} element={<BookView />} />,
+          <Route path={"/data"} element={<DataView />} />,
           <Route path={"/admin/storage"} element={<StorageView />} />,
-          // eslint-disable-next-line react/jsx-pascal-case
           <Route path={"/admin/orders"} element={<OrdersView_admin />} />,
           <Route path={"/admin/statistics"} element={<StatView />} />,
           <Route path={"/admin/manuser"} element={<ManUserView />} />,

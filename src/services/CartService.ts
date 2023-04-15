@@ -1,4 +1,4 @@
-import { apiUrl } from "../config-overrides";
+import { apiUrl } from "../utils/global_config";
 import { getRequest, postRequest } from "../utils/ajax";
 
 export const get_cart_by_user = async (user_id: number, callback: any) => {
@@ -23,7 +23,6 @@ export const getCartItems = async (
         url += "?" + prefix + id.next().value;
       } else url += "&" + prefix + id.next().value;
     }
-    // console.log(url);
     await getRequest(url, callback);
   }
 };
@@ -37,7 +36,6 @@ export const addCartItem = async (
   url += "?user_id=" + user_id.toString();
   url += "&book_id=" + book_id.toString();
   url += "&num=" + num.toString();
-  // console.log(url);
   await postRequest(url);
 };
 
@@ -58,6 +56,5 @@ export const addCartItemNum = async (item_id: number, num: number) => {
 export const deleteCartItem = async (item_id: number) => {
   let url = apiUrl + "/cart/delete";
   url += "?item_id=" + item_id.toString();
-  // console.log(url);
   await postRequest(url);
 };

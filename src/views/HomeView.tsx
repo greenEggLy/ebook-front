@@ -23,6 +23,7 @@ export const HomeView = () => {
 
   const [user, setUser] = useState<User>(emptyUser);
   const [navi, setNavi] = useState<Navi_[]>([]);
+  const [collapsed, setCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
     check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
@@ -38,21 +39,28 @@ export const HomeView = () => {
     });
   }, [navigation]);
 
-  useEffect(() => console.table(user), [user]);
-
   if (user.id !== 0)
     return (
       <Layout>
         <Header className="header">
-          <HomeHeader user={user} />
+          <HomeHeader user={user} collapsed={collapsed} />
         </Header>
-        <Layout>
+        <Layout style={{ marginLeft: collapsed ? 50 : 175 }} hasSider>
           <Sider
             width={200}
             style={{
               background: colorBgContainer,
+              overflow: "auto",
+              height: "100vh",
+              position: "fixed",
+              left: 0,
+              top: 0,
+              bottom: 0,
+              right: 30,
             }}
             collapsible={true}
+            collapsed={collapsed}
+            onCollapse={() => setCollapsed(!collapsed)}
             trigger={<ToolFilled />}
           >
             <SideNavi navi={navi} />
