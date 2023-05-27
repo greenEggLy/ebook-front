@@ -6,12 +6,12 @@ import {
   SignUpForm,
 } from "../components/GlobalComponents/LoginForm";
 import "../css/LoginView.css";
-import { logout } from "../services/LoginService";
+import { LogoutService } from "../services/LoginService";
 
 export const LoginView = () => {
   // useEffect(() => deleteUser);
   useEffect(() => {
-    logout().catch((err) => console.error(err));
+    LogoutService().catch((err) => console.error(err));
   }, []);
   return (
     <div className={"login_wrapper"}>

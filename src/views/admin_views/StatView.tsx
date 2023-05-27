@@ -8,7 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
 import { BarChart_Sales } from "../../components/adminComponents/BarChart_Sales";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { date_back, date_forward } from "../../utils/DateUtil";
 import dayjs from "dayjs";
 import { StatTab } from "../../components/adminComponents/StatTab";
@@ -37,7 +37,7 @@ export const StatView = () => {
   const [showDate, setShowDate] = useState<[dayjs.Dayjs, dayjs.Dayjs]>();
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = adminSessionCheck(res);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));

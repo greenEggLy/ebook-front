@@ -7,13 +7,13 @@ import { CartSearch } from "../../components/GlobalComponents/SearchBar";
 import "../../css/CartView.css";
 import "../../css/BooksView.css";
 import {
-  addCartItemNum,
-  deleteCartItem,
+  AddCartItemNum,
+  DeleteCartItem,
   GetUserCart,
-  minusCartItemNum,
+  MinusCartItemNum,
 } from "../../services/CartService";
 import { EmptyAuth } from "../../assets/data/emptyData";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { getImgPath } from "../../utils/imgPathUtil";
 import { sessionCheck } from "../../utils/sessionUtil";
 
@@ -27,7 +27,7 @@ export const CartView = () => {
   const [chooseGood] = useState<Set<number>>(new Set<number>());
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = sessionCheck(res);
       if (!status.ok) {
         message.error(status.msg, 1).then(() => navigation(status.path));
@@ -100,7 +100,7 @@ export const CartView = () => {
           <Button
             className={"num_minus"}
             onClick={() => {
-              minusCartItemNum(record.id, 1).then(() => {
+              MinusCartItemNum(record.id, 1).then(() => {
                 if (user)
                   GetUserCart(user.id)
                     .then((cart) => {
@@ -117,7 +117,7 @@ export const CartView = () => {
           <Button
             className={"num_add"}
             onClick={() => {
-              addCartItemNum(record.id, 1).then(() => {
+              AddCartItemNum(record.id, 1).then(() => {
                 if (user)
                   GetUserCart(user.id)
                     .then((data) => {
@@ -141,7 +141,7 @@ export const CartView = () => {
         <Button
           className={"del_button"}
           onClick={() => {
-            deleteCartItem(record.id).then(() => {
+            DeleteCartItem(record.id).then(() => {
               let filter = filterCart.filter((item) => item.id !== record.id);
               setFilterCart(filter);
             });

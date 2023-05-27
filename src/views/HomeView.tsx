@@ -9,7 +9,7 @@ import { Navi_, User } from "../assets/Interface";
 import { GetUser } from "../services/UserService";
 import { Footer } from "antd/es/layout/layout";
 import { EmptyUser } from "../assets/data/emptyData";
-import { check_session } from "../services/LoginService";
+import { CheckSession } from "../services/LoginService";
 import { side_navi, side_navi_admin } from "../assets/data/data";
 import { sessionCheck } from "../utils/sessionUtil";
 
@@ -26,7 +26,7 @@ export const HomeView = () => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = sessionCheck(res);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));

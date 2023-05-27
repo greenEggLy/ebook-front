@@ -2,7 +2,7 @@ import { UploadFile } from "antd";
 import { apiUrl } from "../utils/global_config";
 import { RcFile } from "antd/es/upload";
 
-export const uploadImg = async (
+export const UploadImg = async (
   file: UploadFile
 ): Promise<{
   msg: string;

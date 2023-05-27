@@ -9,7 +9,7 @@ export const GetUserOrder = async (user_id: number): Promise<Order[]> => {
     .catch((err) => console.error(err));
 };
 
-export const getAllOrder = async (): Promise<Order[]> => {
+export const GetAllOrder = async (): Promise<Order[]> => {
   const url = apiUrl + "/order/all";
   return await fetch(url, getRequestInit())
     .then((res) => res.json())

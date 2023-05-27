@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { GetBook } from "../../services/BookService";
 import { Button, Col, message, Row } from "antd";
 import { EmptyAuth, emptyBook } from "../../assets/data/emptyData";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { getImgPath } from "../../utils/imgPathUtil";
 import { sessionCheck } from "../../utils/sessionUtil";
 
@@ -26,7 +26,7 @@ export const BookView = () => {
   }, [params.id]);
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = sessionCheck(res);
       if (!status.ok)
         message.error(status.msg).then(() => navigation(status.path));

@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { OrderSearch } from "../../components/GlobalComponents/SearchBar";
 import React, { useEffect, useState } from "react";
 import { DatePicker, message, Typography } from "antd";
-import { getAllOrder, GetOrderByTime } from "../../services/OrderService";
-import { check_session } from "../../services/LoginService";
+import { GetAllOrder, GetOrderByTime } from "../../services/OrderService";
+import { CheckSession } from "../../services/LoginService";
 import { adminSessionCheck } from "../../utils/sessionUtil";
 import { NestTableAdmin } from "../../components/adminComponents/NestTableAdmin";
 import dayjs from "dayjs";
 import moment from "moment/moment";
-import { OrderTab } from "../../components/GlobalComponents/OrderTab";
+import { OrderTab } from "../../components/userComponents/OrderTab";
 import { date_forward } from "../../utils/DateUtil";
 
 const { Title } = Typography;
@@ -28,13 +28,13 @@ export const OrdersView_admin = () => {
   const [showAll, setShowAll] = useState(true);
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = adminSessionCheck(res);
       if (!status.ok) {
         message.error(status.msg, 1).then(() => navigation(status.path));
         return;
       }
-      getAllOrder().then((data) => {
+      GetAllOrder().then((data) => {
         data = data.sort((a, b) => {
           if (a.id > b.id) return -1;
           if (a.id < b.id) return 1;
@@ -48,7 +48,7 @@ export const OrdersView_admin = () => {
 
   useEffect(() => {
     if (showAll) {
-      getAllOrder()
+      GetAllOrder()
         .then((data) => {
           data = data.sort((a, b) => {
             if (a.id > b.id) return -1;

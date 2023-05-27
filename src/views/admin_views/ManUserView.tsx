@@ -14,7 +14,7 @@ import { UserSearch } from "../../components/GlobalComponents/SearchBar";
 import { ManUserInfo, User } from "../../assets/Interface";
 import { GetAllUsers, ModUserInfo_ADMIN } from "../../services/UserService";
 import { ColumnsType } from "antd/es/table";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { useNavigate } from "react-router-dom";
 import { adminSessionCheck } from "../../utils/sessionUtil";
 
@@ -41,7 +41,7 @@ export const ManUserView = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = adminSessionCheck(res);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));

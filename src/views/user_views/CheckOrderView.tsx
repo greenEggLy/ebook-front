@@ -5,7 +5,7 @@ import { ColumnsType } from "antd/es/table";
 import { useLocation, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import "../../css/BuyView.css";
-import { getCartItems } from "../../services/CartService";
+import { GetCartItems } from "../../services/CartService";
 import { createOrder } from "../../services/OrderService";
 import { getImgPath } from "../../utils/imgPathUtil";
 
@@ -21,7 +21,7 @@ export const CheckOrderView = () => {
       message.error("请选择购买商品", 1).then(() => navigation("/cart"));
       return;
     }
-    getCartItems(cartItem_ids).then((res) => {
+    GetCartItems(cartItem_ids).then((res) => {
       setGoods(res);
       let price = 0;
       res.forEach((item) => (price += item.number * item.book.price));

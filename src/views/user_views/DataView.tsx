@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { AuthInfo, StatBookMoney, StatBookSales } from "../../assets/Interface";
 import { EmptyAuth } from "../../assets/data/emptyData";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { Col, DatePicker, message, Row, Typography } from "antd";
 import dayjs from "dayjs";
 import { date_back, date_forward } from "../../utils/DateUtil";
@@ -30,7 +30,7 @@ export const DataView = () => {
   const [moneyFilter, setMoneyFilter] = useState<StatBookMoney[]>([]);
 
   useEffect(() => {
-    check_session().then((msg) => {
+    CheckSession().then((msg) => {
       let status = sessionCheck(msg);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));

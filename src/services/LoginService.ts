@@ -6,7 +6,7 @@ import {
 import { LogInForm, Msg, SignUpForm } from "../assets/Interface";
 import { LoginFaultMsg } from "../assets/data/emptyData";
 
-export const login = async (
+export const LoginService = async (
   username: string,
   password: string,
   callback: any
@@ -24,7 +24,7 @@ export const login = async (
     });
 };
 
-export const check_session = async (): Promise<Msg> => {
+export const CheckSession = async (): Promise<Msg> => {
   let username = localStorage.getItem("user");
   if (username === null) {
     return LoginFaultMsg;
@@ -33,13 +33,13 @@ export const check_session = async (): Promise<Msg> => {
   return await fetch(url, postRequestInit).then((response) => response.json());
 };
 
-export const logout = async () => {
+export const LogoutService = async () => {
   const url = apiUrl + "/logout";
   localStorage.clear();
   await fetch(url, postRequestInit);
 };
 
-export const signup = async (
+export const SignupService = async (
   username: string,
   email: string,
   password: string,

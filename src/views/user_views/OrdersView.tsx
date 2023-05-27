@@ -7,14 +7,14 @@ import { OrderSearch } from "../../components/GlobalComponents/SearchBar";
 import "../../css/OrdersView.css";
 import { GetUserOrder } from "../../services/OrderService";
 import { EmptyAuth } from "../../assets/data/emptyData";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { getImgPath } from "../../utils/imgPathUtil";
 import { sessionCheck } from "../../utils/sessionUtil";
 import dayjs from "dayjs";
 import { date_forward } from "../../utils/DateUtil";
 import { StatOneOrdersByTime } from "../../services/StatService";
 import moment from "moment";
-import { OrderTab } from "../../components/GlobalComponents/OrderTab";
+import { OrderTab } from "../../components/userComponents/OrderTab";
 import { NestTable } from "../../components/userComponents/NestTable";
 
 const { Title } = Typography;
@@ -33,7 +33,7 @@ export const OrdersView = () => {
   const [showAll, setShowAll] = useState(true);
 
   useEffect(() => {
-    check_session().then((msg) => {
+    CheckSession().then((msg) => {
       let status = sessionCheck(msg);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));

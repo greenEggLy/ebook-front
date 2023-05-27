@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { login, signup } from "../../services/LoginService";
+import { LoginService, SignupService } from "../../services/LoginService";
 import { Msg } from "../../assets/Interface";
 
 export const LoginForm = () => {
@@ -15,7 +15,7 @@ export const LoginForm = () => {
       if (data && data.status >= 0)
         localStorage.setItem("user", data.data.username);
     };
-    await login(usr_name, usr_password, (data: Msg) => {
+    await LoginService(usr_name, usr_password, (data: Msg) => {
       callback(data);
       if (data.status < 0) {
         message.error(data.msg, 1);
@@ -77,13 +77,15 @@ export const SignUpForm = () => {
     const email = form.getFieldValue(["email"]);
     let msg: Msg;
     if (!username || !password || !email) return;
-    signup(username, email, password, (data: Msg) => (msg = data)).then(() => {
-      if (msg.status >= 0) {
-        message.success(msg.msg, 0.5).then(() => navigate("/login"));
-      } else {
-        message.error(msg.msg, 1);
+    SignupService(username, email, password, (data: Msg) => (msg = data)).then(
+      () => {
+        if (msg.status >= 0) {
+          message.success(msg.msg, 0.5).then(() => navigate("/login"));
+        } else {
+          message.error(msg.msg, 1);
+        }
       }
-    });
+    );
   };
 
   return (

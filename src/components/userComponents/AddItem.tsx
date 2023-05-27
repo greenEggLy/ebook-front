@@ -1,6 +1,6 @@
 import "../../css/BookView.css";
 import { Button, message } from "antd";
-import { addCartItem } from "../../services/CartService";
+import { AddCartItem } from "../../services/CartService";
 import { createOrderDirectly } from "../../services/OrderService";
 import { useNavigate } from "react-router-dom";
 
@@ -56,7 +56,7 @@ export const AddItem = ({
         <Button
           className={"to_cart"}
           onClick={() => {
-            addCartItem(user_id, book_id, item_num)
+            AddCartItem(user_id, book_id, item_num)
               .then(() => message.info("加购成功", 0.5))
               .then(() => set_num("0"));
           }}

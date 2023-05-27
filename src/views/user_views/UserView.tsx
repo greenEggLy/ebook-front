@@ -23,20 +23,16 @@ import {
   ModUserAvatar,
   ModUserInfo_USER,
 } from "../../services/UserService";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { EmptyUser } from "../../assets/data/emptyData";
 import { GetUserCart } from "../../services/CartService";
 import { UploadOutlined } from "@ant-design/icons";
-import { uploadImg } from "../../services/ImageService";
+import { UploadImg } from "../../services/ImageService";
 import { getImgPath } from "../../utils/imgPathUtil";
 import { sessionCheck } from "../../utils/sessionUtil";
 
 const { Title } = Typography;
 const { Panel } = Collapse;
-
-interface Props {
-  user: User;
-}
 
 export const UserView = () => {
   const [form] = Form.useForm();
@@ -48,7 +44,7 @@ export const UserView = () => {
   const [, setUploading] = useState(false);
 
   useEffect(() => {
-    check_session().then((msg) => {
+    CheckSession().then((msg) => {
       let status = sessionCheck(msg);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));
@@ -76,7 +72,7 @@ export const UserView = () => {
       return;
     }
     setUploading(true);
-    const response = await uploadImg(fileList[0]);
+    const response = await UploadImg(fileList[0]);
     await ModUserAvatar(user.id, response.data.path);
     setUploading(false);
     setFileList([]);

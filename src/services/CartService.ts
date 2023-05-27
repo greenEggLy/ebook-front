@@ -10,7 +10,7 @@ export const GetUserCart = async (user_id: number): Promise<CartItem[]> => {
     .catch((err) => console.error(err));
 };
 
-export const getCartItems = async (
+export const GetCartItems = async (
   cartItem_ids: Set<number>
 ): Promise<CartItem[]> => {
   const prefix = "id=";
@@ -28,7 +28,7 @@ export const getCartItems = async (
     .catch((err) => console.error(err));
 };
 
-export const addCartItem = async (
+export const AddCartItem = async (
   user_id: number,
   book_id: number,
   num: number
@@ -40,21 +40,21 @@ export const addCartItem = async (
   await postRequest(url);
 };
 
-export const minusCartItemNum = async (item_id: number, num: number) => {
+export const MinusCartItemNum = async (item_id: number, num: number) => {
   let url = apiUrl + "/cart/minus-num";
   url += "?item_id=" + item_id.toString();
   url += "&num=" + num.toString();
   await postRequest(url);
 };
 
-export const addCartItemNum = async (item_id: number, num: number) => {
+export const AddCartItemNum = async (item_id: number, num: number) => {
   let url = apiUrl + "/cart/add-num";
   url += "?item_id=" + item_id.toString();
   url += "&num=" + num.toString();
   await postRequest(url);
 };
 
-export const deleteCartItem = async (item_id: number) => {
+export const DeleteCartItem = async (item_id: number) => {
   let url = apiUrl + "/cart/delete";
   url += "?item_id=" + item_id.toString();
   await postRequest(url);

@@ -18,15 +18,15 @@ import "../../css/StorageView.css";
 import type { FormInstance } from "antd/es/form";
 import {
   addBook,
-  delBook,
+  DelBook,
   GetAllBook,
   modBook,
-  modBookCover,
+  ModBookCover,
 } from "../../services/BookService";
 import { useNavigate } from "react-router-dom";
-import { check_session } from "../../services/LoginService";
+import { CheckSession } from "../../services/LoginService";
 import { getImgPath } from "../../utils/imgPathUtil";
-import { uploadImg } from "../../services/ImageService";
+import { UploadImg } from "../../services/ImageService";
 import { adminSessionCheck } from "../../utils/sessionUtil";
 
 const { Title } = Typography;
@@ -161,7 +161,7 @@ export const StorageView = () => {
   const [, setUploading] = useState(false);
 
   useEffect(() => {
-    check_session().then((res) => {
+    CheckSession().then((res) => {
       let status = adminSessionCheck(res);
       if (!status.ok)
         message.error(status.msg, 1).then(() => navigation(status.path));
@@ -176,7 +176,7 @@ export const StorageView = () => {
   const handleDelete = (key: React.Key) => {
     if (allData.length) {
       const newData = allData.filter((item) => item.id !== key);
-      if (key > 0) delBook(key).catch((err) => console.error(err));
+      if (key > 0) DelBook(key).catch((err) => console.error(err));
       if (key === 0) setDisButton(true);
       setAllData(newData);
     }
@@ -250,9 +250,9 @@ export const StorageView = () => {
       return;
     }
     setUploading(true);
-    const res = await uploadImg(fileList[0]);
+    const res = await UploadImg(fileList[0]);
     if (selectId) {
-      const response = await modBookCover(selectId, res.data.path);
+      const response = await ModBookCover(selectId, res.data.path);
       if (!response.ok) {
         message.error(response.statusText, 1);
         return;

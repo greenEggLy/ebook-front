@@ -18,7 +18,7 @@ export const GetAllBook = async (): Promise<Book[]> => {
     .catch((err) => console.error(err));
 };
 
-export const modBookCover = async (id: number, cover: string) => {
+export const ModBookCover = async (id: number, cover: string) => {
   const url = apiUrl + "/book/cover";
   let form = new FormData();
   form.append("book_id", id.toString());
@@ -30,7 +30,7 @@ export const modBookCover = async (id: number, cover: string) => {
   return await fetch(url, postOpt);
 };
 
-export const delBook = async (id: React.Key) => {
+export const DelBook = async (id: React.Key) => {
   const url = apiUrl + "/book/delete?book_id=" + id.toString();
   await postRequest(url);
 };
@@ -51,8 +51,6 @@ export const addBook = async (newBook: Book): Promise<Response> => {
   };
   let body = JSON.stringify(json);
   return await fetch(url, postJSONRequestInit(body));
-  // .then((res) => res.json())
-  // .catch((err) => console.error(err));
 };
 
 export const modBook = async (book: Book): Promise<Response> => {
