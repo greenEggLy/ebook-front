@@ -24,14 +24,13 @@ export const BookSearch = ({ allData, setFilter }: PropsBuy) => {
     let title = item.title;
     let ISBN = item.isbn;
     let authors = item.author;
-    let inAuthors = false;
-    for (let author of authors) {
-      if (author.indexOf(text) > -1) {
-        inAuthors = true;
-        break;
-      }
-    }
-    return inAuthors || title.indexOf(text) > -1 || ISBN.indexOf(text) > -1;
+    let pub = item.pub;
+    return (
+      pub.includes(text) ||
+      authors.includes(text) ||
+      title.indexOf(text) > -1 ||
+      ISBN.indexOf(text) > -1
+    );
   }
 
   function onSearch(text: string) {

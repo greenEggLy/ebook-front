@@ -1,15 +1,8 @@
-import React, { useEffect } from "react";
 import { Col, Row, Space } from "antd";
+import React from "react";
+import { SignUpForm } from "../components/GlobalComponents/SignUpForm";
 
-import { LoginForm } from "../components/GlobalComponents/LoginForm";
-import "../css/LoginView.css";
-import { LogoutService } from "../services/LoginService";
-
-export const LoginView = () => {
-  // useEffect(() => deleteUser);
-  useEffect(() => {
-    LogoutService().catch((err) => console.error(err));
-  }, []);
+export const SignupView = () => {
   return (
     <div className={"login_wrapper"}>
       <div className={"position-relative"}>
@@ -26,7 +19,7 @@ export const LoginView = () => {
         <Col span={8}>
           <div className={"application_main"}>
             <main>
-              <LoginForm />
+              <SignUpForm />
             </main>
           </div>
         </Col>

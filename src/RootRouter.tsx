@@ -6,7 +6,7 @@ import { UserView } from "./views/user_views/UserView";
 import { BookView } from "./views/user_views/BookView";
 import { ErrorView } from "./views/ErrorView";
 import { BooksView } from "./views/user_views/BooksView";
-import { LoginView, SignupView } from "./views/LoginView";
+import { LoginView } from "./views/LoginView";
 import { StorageView } from "./views/admin_views/StorageView";
 import { OrdersView_admin } from "./views/admin_views/OrdersView_admin";
 import { StatView } from "./views/admin_views/StatView";
@@ -15,6 +15,7 @@ import { OrdersView } from "./views/user_views/OrdersView";
 import { CheckOrderView } from "./views/user_views/CheckOrderView";
 import { SubmitOrderView } from "./views/user_views/SubmitOrderView";
 import { DataView } from "./views/user_views/DataView";
+import { SignupView } from "./views/SignupView";
 
 export const RootRouter = () => {
   return (

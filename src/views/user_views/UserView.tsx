@@ -14,7 +14,7 @@ import {
   UploadProps,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import { CartItem, User } from "../../assets/Interface";
+import { CartItem, Msg, User } from "../../assets/Interface";
 import "../../css/UserView.css";
 import { UserCartList } from "../../components/userComponents/UserCartList";
 import { Link, useNavigate } from "react-router-dom";
@@ -30,6 +30,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { UploadImg } from "../../services/ImageService";
 import { getImgPath } from "../../utils/imgPathUtil";
 import { sessionCheck } from "../../utils/sessionUtil";
+import { validateEmail } from "../../utils/EmalRegexUtil";
 
 const { Title } = Typography;
 const { Panel } = Collapse;
@@ -113,18 +114,41 @@ export const UserView = () => {
         <div className={"modal_info"}>
           <Modal
             open={open}
-            onOk={() => {
+            onOk={async () => {
               let username = form.getFieldValue(["username"]);
               let about = form.getFieldValue(["about"]);
               let email = form.getFieldValue(["email"]);
+              if (!validateEmail(email)) {
+                message.error("请输入合法邮箱");
+                return;
+              }
               if (
                 username !== user.name ||
                 about !== user.about ||
                 email !== user.email
               ) {
-                ModUserInfo_USER(user.id, username, about, email)
-                  .then(() => setOpen(false))
-                  .then(() => window.location.reload());
+                const response = await ModUserInfo_USER(
+                  user.id,
+                  username,
+                  about,
+                  email
+                );
+                if (!response.ok) {
+                  message.error("修改失败", 1);
+                  return;
+                }
+                const msg: Msg = await response.json();
+                if (msg.status !== 0) {
+                  message.error(msg.msg, 1);
+                  return;
+                }
+                setUser({
+                  ...user,
+                  name: username,
+                  email: email,
+                  about: about,
+                });
+                setOpen(false);
               } else {
                 setOpen(false);
               }
@@ -137,7 +161,7 @@ export const UserView = () => {
                 name={"username"}
                 label={"用户名"}
                 initialValue={user.name}
-                required={true}
+                required
               >
                 <Input className={"form_input"} />
               </Form.Item>
@@ -154,6 +178,7 @@ export const UserView = () => {
                 name={"email"}
                 label={"邮箱"}
                 initialValue={user.email}
+                required
               >
                 <Input className={"form_input"} />
               </Form.Item>

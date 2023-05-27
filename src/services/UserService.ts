@@ -23,7 +23,7 @@ export const ModUserInfo_USER = async (
     email: email,
   };
   let json = JSON.stringify(u_info);
-  await fetch(url, postJSONRequestInit(json));
+  return await fetch(url, postJSONRequestInit(json));
 };
 
 export const GetAllUsers = async (): Promise<ManUserInfo[]> => {

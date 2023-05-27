@@ -100,6 +100,7 @@ export const CartView = () => {
           <Button
             className={"num_minus"}
             onClick={() => {
+              if (record.number <= 1) return;
               MinusCartItemNum(record.id, 1).then(() => {
                 if (user)
                   GetUserCart(user.id)

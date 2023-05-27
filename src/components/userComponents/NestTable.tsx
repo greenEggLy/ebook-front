@@ -28,7 +28,7 @@ export const NestTable = ({ all_order, order_columns }: Props) => {
       title: "总价",
       render: (value, record, index) => {
         let p = 0;
-        record.items.forEach((item) => (p += item.price));
+        record.items.forEach((item) => (p += item.price * item.number));
         return <p>{p}</p>;
       },
     },

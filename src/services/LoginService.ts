@@ -42,9 +42,8 @@ export const LogoutService = async () => {
 export const SignupService = async (
   username: string,
   email: string,
-  password: string,
-  callback: any
-) => {
+  password: string
+): Promise<Response> => {
   const url = apiUrl + "/signup";
   const json: SignUpForm = {
     username: username,
@@ -52,7 +51,5 @@ export const SignupService = async (
     password: password,
   };
   const body = JSON.stringify(json);
-  await fetch(url, postJSONRequestInit(body))
-    .then((response) => response.json())
-    .then((data: Msg) => callback(data));
+  return await fetch(url, postJSONRequestInit(body));
 };
