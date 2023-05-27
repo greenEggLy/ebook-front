@@ -1,47 +1,47 @@
-import { Book, backMsg, User } from "../../Interface";
-import { SetStateAction, useEffect, useRef, useState } from "react";
-import { AddItem } from "../../components/AddItem";
+import { AuthInfo, Book } from "../../assets/Interface";
+import { useEffect, useState } from "react";
+import { AddItem } from "../../components/userComponents/AddItem";
 import "../../css/BookView.css";
-import { BookViewHeader } from "../../components/BookViewHeader";
 import { useNavigate, useParams } from "react-router-dom";
-import { get_one_book } from "../../services/BookService";
-import { get_user, getUser } from "../../services/UserService";
-import { Col, message, Row } from "antd";
-import { emptyBook, emptySessionMsg, emptyUser } from "../../emptyData";
+import { GetBook } from "../../services/BookService";
+import { Button, Col, message, Row } from "antd";
+import { EmptyAuth, emptyBook } from "../../assets/data/emptyData";
 import { check_session } from "../../services/LoginService";
+import { getImgPath } from "../../utils/imgPathUtil";
+import { sessionCheck } from "../../utils/sessionUtil";
 
 export const BookView = () => {
   const params = useParams();
   const navigation = useNavigate();
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
-  const [user, setUser] = useState<User>(emptyUser);
+  const [user, setUser] = useState<AuthInfo>(EmptyAuth);
 
   const [book, setBook] = useState<Book>(emptyBook);
   const [item_num, set_item_num] = useState(0);
 
   useEffect(() => {
     let index = Number(params.id);
-    get_one_book(index, (data: Book) => setBook(data)).catch((err) =>
-      console.error(err)
-    );
+    GetBook(index).then((data: Book) => {
+      setBook(data);
+    });
   }, [params.id]);
 
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        get_user(msg_ref.current.data.userId, (data: User) =>
-          setUser(data)
-        ).catch((err) => console.error(err));
-      } else {
-        message.error(msg_ref.current.msg).then(() => navigation("/login"));
-      }
+    check_session().then((res) => {
+      let status = sessionCheck(res);
+      if (!status.ok)
+        message.error(status.msg).then(() => navigation(status.path));
+      setUser(res.data);
     });
   }, [navigation]);
 
   if (book && user.id) {
     return (
       <div className={"book_view"}>
-        <BookViewHeader book={book} />
+        <div className={"head"}>
+          <Button className={"go_back"} onClick={() => window.history.go(-1)}>
+            {"< back"}
+          </Button>
+        </div>
         <div className={"scan"}>
           <PicDisplay book={book} />
           <div className={"info_display"}>
@@ -87,7 +87,11 @@ interface pic_props {
 const PicDisplay = ({ book }: pic_props) => {
   return (
     <div className={"pic_display"}>
-      <img className={"big_pic"} alt={book.title} src={book.picture} />
+      <img
+        className={"big_pic"}
+        alt={book.title}
+        src={getImgPath(book.cover)}
+      />
     </div>
   );
 };

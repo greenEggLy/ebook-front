@@ -1,4 +1,4 @@
-import { Order, OrderItem } from "../Interface";
+import { Order, OrderItem } from "../../assets/Interface";
 import { Col, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 
@@ -7,10 +7,10 @@ interface Props {
   order_columns: ColumnsType<OrderItem>;
 }
 
-export const OrderList = ({ order, order_columns }: Props) => {
+export const AdminOrderList = ({ order, order_columns }: Props) => {
   let p = 0;
   const calPrice = () => {
-    order.items.map((item) => (p += item.price));
+    order.items.map((item) => (p += item.number * item.price));
   };
   calPrice();
   return (
@@ -18,6 +18,9 @@ export const OrderList = ({ order, order_columns }: Props) => {
       <Row>
         <Col span={4}>
           <b>{"购买时间：" + order.time}</b>
+        </Col>
+        <Col span={4}>
+          <b>{"购买人：" + order.buyer.name}</b>
         </Col>
         <b>{"总价: " + p.toString()}</b>
       </Row>

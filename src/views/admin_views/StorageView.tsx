@@ -1,7 +1,7 @@
-import { BookSearch } from "../../components/SearchBar";
-import { Book, backMsg, User } from "../../Interface";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import type { InputRef } from "antd";
+import { BookSearch } from "../../components/GlobalComponents/SearchBar";
+import { Book, Msg } from "../../assets/Interface";
+import { UploadOutlined } from "@ant-design/icons";
+import type { InputRef, UploadFile, UploadProps } from "antd";
 import {
   Button,
   Form,
@@ -11,19 +11,23 @@ import {
   Popconfirm,
   Table,
   Typography,
+  Upload,
 } from "antd";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "../../css/StorageView.css";
 import type { FormInstance } from "antd/es/form";
 import {
   addBook,
   delBook,
-  get_all_books,
+  GetAllBook,
   modBook,
-  modBookPic,
+  modBookCover,
 } from "../../services/BookService";
 import { useNavigate } from "react-router-dom";
 import { check_session } from "../../services/LoginService";
-import { emptySessionMsg } from "../../emptyData";
+import { getImgPath } from "../../utils/imgPathUtil";
+import { uploadImg } from "../../services/ImageService";
+import { adminSessionCheck } from "../../utils/sessionUtil";
 
 const { Title } = Typography;
 
@@ -61,6 +65,7 @@ const newData: Book = {
   pub: "",
   stock: 0,
   sales: 0,
+  cover: "",
 };
 
 interface EditableCellProps {
@@ -143,40 +148,37 @@ type ColumnTypes = Exclude<EditableTableProps["columns"], undefined>;
 
 export const StorageView = () => {
   const navigation = useNavigate();
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
 
-  const [dataSource, setDataSource] = useState<Book[]>([]);
+  const [allData, setAllData] = useState<Book[]>([]);
   const [filterData, setFilterData] = useState<Book[]>([]);
   const [showModal, setShowModal] = useState(false);
 
   const [disButton, setDisButton] = useState(true);
   const [selectId, setSelectId] = useState<number>(-1);
-  const [formUrl, setFormUrl] = useState<string>("");
 
   const [newBook, setNewBook] = useState<Book>(newData);
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [, setUploading] = useState(false);
+
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        if (msg_ref.current.data.userType < 1)
-          message.error("没有管理员权限！").then(() => navigation("/"));
-        else {
-          get_all_books((data: Book[]) => {
-            setDataSource(data);
-            setFilterData(data);
-          }).catch((err) => console.error(err));
-        }
-      } else {
-        message.error(msg_ref.current.msg).then(() => navigation("/login"));
-      }
+    check_session().then((res) => {
+      let status = adminSessionCheck(res);
+      if (!status.ok)
+        message.error(status.msg, 1).then(() => navigation(status.path));
+      else
+        GetAllBook().then((res) => {
+          setAllData(res);
+          setFilterData(res);
+        });
     });
   }, [navigation]);
 
   const handleDelete = (key: React.Key) => {
-    if (dataSource.length) {
-      const newData = dataSource.filter((item) => item.id !== key);
+    if (allData.length) {
+      const newData = allData.filter((item) => item.id !== key);
       if (key > 0) delBook(key).catch((err) => console.error(err));
       if (key === 0) setDisButton(true);
-      setDataSource(newData);
+      setAllData(newData);
     }
   };
 
@@ -188,11 +190,11 @@ export const StorageView = () => {
         newBook.isbn &&
         newBook.price &&
         newBook.pub &&
-        newBook.picture
+        newBook.cover
       )
     )
       return -1;
-    if (newBook.price <= 0) return -2;
+    if (newBook.price <= 0 || newBook.stock < 0) return -2;
     return 0;
   };
 
@@ -207,27 +209,77 @@ export const StorageView = () => {
   };
 
   const handleAdd = () => {
-    if (dataSource.length) {
-      setDataSource([newData, ...dataSource]);
-      setNewBook(newData);
-      setDisButton(false);
-    }
+    setAllData([newData, ...allData]);
+    setNewBook(newData);
+    setFilterData([newData, ...filterData]);
+    setDisButton(false);
   };
-  const handleConfirmAdd = () => {
-    if (dataSource.length) {
+  const handleConfirmAdd = async () => {
+    if (allData.length) {
       setDisButton(true);
       let status = canAdd();
-      if (status === 0) {
-        addBook(newBook).finally(window.location.reload);
-        setNewBook(newData);
-      } else if (status === -1) {
-        message.error("请填写完整信息！", 1);
-        setDisButton(false);
-      } else {
-        message.error("填写信息有误！", 1);
-        setDisButton(false);
+      switch (status) {
+        case 0:
+          let response = await addBook(newBook);
+          if (!response.ok) {
+            message.error("添加失败!", 1);
+            return;
+          }
+          let msg: Msg = await response.json();
+          if (msg.status === 0) {
+            message.success("添加成功！", 1);
+          } else {
+            message.error(msg.msg, 1);
+          }
+          setNewBook(newData);
+          break;
+        case -1:
+          message.error("请填写完整信息！", 1);
+          setDisButton(false);
+          break;
+        case -2:
+          message.error("填写信息有误！", 1);
+          setDisButton(false);
+          break;
       }
     }
+  };
+  const handleUpload = async () => {
+    if (fileList.length === 0) {
+      message.error("请先选择图片！", 1);
+      return;
+    }
+    setUploading(true);
+    const res = await uploadImg(fileList[0]);
+    if (selectId) {
+      const response = await modBookCover(selectId, res.data.path);
+      if (!response.ok) {
+        message.error(response.statusText, 1);
+        return;
+      }
+    } else {
+      setNewBook({ ...newBook, cover: res.data.path });
+    }
+    let newData = [...allData];
+    const index = newData.findIndex((item) => item.id === selectId);
+    let item = newData[index];
+    let newitem = item;
+    newitem.cover = res.data.path;
+    newData.splice(index, 1, { ...item, ...newitem });
+    setFilterData(newData);
+    setAllData(newData);
+    setUploading(false);
+    setFileList([]);
+    setShowModal(false);
+  };
+
+  const uploadProps: UploadProps = {
+    multiple: false,
+    beforeUpload: (file) => {
+      setFileList([file]);
+      return false;
+    },
+    fileList,
   };
 
   const defaultColumns: (ColumnTypes[number] & {
@@ -236,18 +288,19 @@ export const StorageView = () => {
   })[] = [
     {
       title: "封面",
-      dataIndex: "picture",
+      dataIndex: "cover",
       width: "15%",
-      render: (value, _, index) => (
+      // @ts-ignore
+      render: (value, record: Book, index) => (
         <img
           onClick={() => {
-            setFormUrl(value);
-            setSelectId(index);
+            setSelectId(record.id);
             setShowModal(true);
+            console.log(getImgPath(value));
           }}
           className={"storage_pic"}
-          alt={""}
-          src={value}
+          alt={"img"}
+          src={getImgPath(value)}
         />
       ),
     },
@@ -287,8 +340,8 @@ export const StorageView = () => {
       dataIndex: "operation",
       // @ts-ignore
       render: (_, record: { id: React.Key }) =>
-        dataSource ? (
-          dataSource.length >= 1 ? (
+        allData ? (
+          allData.length >= 1 ? (
             <>
               <Popconfirm
                 title="确定删除?"
@@ -302,20 +355,28 @@ export const StorageView = () => {
     },
   ];
 
-  const handleSave = (row: Book) => {
-    if (dataSource) {
-      const newData = [...dataSource];
-      const index = newData.findIndex((item) => row.id === item.id);
-      const item = newData[index];
-      newData.splice(index, 1, {
-        ...item,
-        ...row,
-      });
-      if (item.id === 0) setNewBook(row);
-      else if (!equals(row, item))
-        modBook(row).then(() => message.success("修改成功！"));
-      setDataSource(newData);
+  const handleSave = async (row: Book) => {
+    let newData = [...allData];
+    const index = newData.findIndex((item) => row.id === item.id);
+    const item = newData[index];
+
+    if (item.id === 0) setNewBook(row);
+    else if (!equals(row, item)) {
+      const response = await modBook(row);
+      if (!response.ok) {
+        message.error("修改失败!", 1);
+        return;
+      }
+      const msg: Msg = await response.json();
+      if (msg.status) {
+        message.error(msg.msg, 1);
+        return;
+      }
+      message.success("修改成功", 1);
     }
+    newData.splice(index, 1, { ...item, ...row });
+    setAllData(newData);
+    setFilterData(newData);
   };
 
   const components = {
@@ -341,24 +402,14 @@ export const StorageView = () => {
     };
   });
 
-  const HandleOk = () => {
-    let pic_url = formUrl;
-    if (selectId > 0)
-      modBookPic(selectId, pic_url).catch((err) => console.error(err));
-    else newBook.picture = pic_url;
-    setFormUrl("");
-    setSelectId(-1);
-    setShowModal(false);
-  };
-
-  if (dataSource)
+  if (allData)
     return (
       <div>
         <div className={"order_title"}>
           <Title>{"库存"}</Title>
         </div>
         <div className={"search_bar"}>
-          <BookSearch allData={dataSource} setFilter={setFilterData} />
+          <BookSearch allData={allData} setFilter={setFilterData} />
         </div>
         <Button
           onClick={handleAdd}
@@ -379,10 +430,12 @@ export const StorageView = () => {
         <Modal
           title={"书籍图片"}
           open={showModal}
-          onOk={HandleOk}
+          onOk={handleUpload}
           onCancel={() => setShowModal(false)}
         >
-          <Input value={formUrl} onChange={(e) => setFormUrl(e.target.value)} />
+          <Upload {...uploadProps}>
+            <Button icon={<UploadOutlined />}>Upload</Button>
+          </Upload>
         </Modal>
         <Table
           components={components}
@@ -393,5 +446,5 @@ export const StorageView = () => {
         />
       </div>
     );
-  else return <></>;
+  else return <div></div>;
 };

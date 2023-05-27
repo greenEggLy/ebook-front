@@ -1,7 +1,7 @@
-import "../css/BookView.css";
+import "../../css/BookView.css";
 import { Button, message } from "antd";
-import { addCartItem } from "../services/CartService";
-import { createOrderDirectly } from "../services/OrderService";
+import { addCartItem } from "../../services/CartService";
+import { createOrderDirectly } from "../../services/OrderService";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -67,9 +67,13 @@ export const AddItem = ({
         <Button
           className={"buy_now"}
           onClick={() => {
-            createOrderDirectly(user_id, book_id, item_num).then(() =>
-              navigation("/submitOrder")
-            );
+            createOrderDirectly(user_id, book_id, item_num).then((msg) => {
+              if (!msg.status)
+                message
+                  .success("订单提交成功", 0.5)
+                  .then(() => navigation("/submitOrder"));
+              else message.error(msg.msg, 0.5);
+            });
           }}
           disabled={!canBuy || !item_num}
         >

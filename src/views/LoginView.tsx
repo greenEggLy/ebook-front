@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { Col, Row, Space } from "antd";
 
-import { LoginForm, SignUpForm } from "../components/LoginForm";
+import {
+  LoginForm,
+  SignUpForm,
+} from "../components/GlobalComponents/LoginForm";
 import "../css/LoginView.css";
 import { logout } from "../services/LoginService";
-import { Link } from "react-router-dom";
 
 export const LoginView = () => {
   // useEffect(() => deleteUser);

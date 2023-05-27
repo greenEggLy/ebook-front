@@ -3,8 +3,8 @@ import {
   postJSONRequestInit,
   postRequestInit,
 } from "../utils/global_config";
-import { message } from "antd";
-import { backMsg, LogInForm, SignUpForm } from "../Interface";
+import { LogInForm, Msg, SignUpForm } from "../assets/Interface";
+import { LoginFaultMsg } from "../assets/data/emptyData";
 
 export const login = async (
   username: string,
@@ -24,19 +24,13 @@ export const login = async (
     });
 };
 
-export const check_session = async (callback: any) => {
+export const check_session = async (): Promise<Msg> => {
   let username = localStorage.getItem("user");
   if (username === null) {
-    message.error("尚未登陆！");
-    window.location.replace("/login");
-    return;
+    return LoginFaultMsg;
   }
   const url = apiUrl + "/session/check";
-  await fetch(url, postRequestInit)
-    .then((response) => response.json())
-    .then((data) => {
-      callback(data);
-    });
+  return await fetch(url, postRequestInit).then((response) => response.json());
 };
 
 export const logout = async () => {
@@ -60,5 +54,5 @@ export const signup = async (
   const body = JSON.stringify(json);
   await fetch(url, postJSONRequestInit(body))
     .then((response) => response.json())
-    .then((data: backMsg) => callback(data));
+    .then((data: Msg) => callback(data));
 };

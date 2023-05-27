@@ -1,8 +1,9 @@
-import { Book, CartItem, OrderItem } from "../Interface";
+import { Book, CartItem } from "../../assets/Interface";
 import { Table } from "antd";
 import React from "react";
 import { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
+import { getImgPath } from "../../utils/imgPathUtil";
 
 // import { cart_columns } from "../views/CartView";
 
@@ -31,7 +32,7 @@ const cart_columns: ColumnsType<CartItem> = [
     render: (book: Book) => (
       <div className={"cart_pic"}>
         <Link to={"/book/" + book.id}>
-          <img alt={book.picture} src={book.picture} />
+          <img alt={book.title} src={getImgPath(book.cover)} />
         </Link>
       </div>
     ),
@@ -71,57 +72,4 @@ const cart_columns: ColumnsType<CartItem> = [
       </div>
     ),
   },
-];
-
-const bought_columns: ColumnsType<OrderItem> = [
-  {
-    title: "书本图片",
-    dataIndex: "book",
-    key: "book_pic",
-    width: "25%",
-    render: (book: Book) => (
-      <div className={"cart_pic"}>
-        <Link to={"/book/" + book.id}>
-          <img alt={book.picture} src={book.picture} />
-        </Link>
-      </div>
-    ),
-  },
-  {
-    title: "书名",
-    dataIndex: "book",
-    key: "book_name",
-    width: "20%",
-    render: (book: Book) => <p className={"cart_title"}>{book.title}</p>,
-  },
-  {
-    title: "ISBN",
-    dataIndex: "book",
-    key: "book_isbn",
-    render: (book: Book) => <p className={"cart_isbn"}>{book.isbn}</p>,
-  },
-  {
-    title: "单价",
-    dataIndex: "book",
-    key: "price",
-    width: "20%",
-    render: (book: Book) => <p>{"￥" + book.price}</p>,
-  },
-  {
-    title: "数量",
-    dataIndex: "item_number",
-    key: "item_number",
-    width: "15%",
-    render: (item_number: number) => (
-      <div className={"num"}>
-        <p>{item_number}</p>
-      </div>
-    ),
-  },
-  // {
-  //   title: "操作",
-  //   key: "action",
-  //   width: "10%",
-  //   render: () => <Button className={"del_button"}>{"删除"}</Button>,
-  // },
 ];

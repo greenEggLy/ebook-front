@@ -1,4 +1,4 @@
-import { Navi_ } from "./Interface";
+import { Navi_ } from "../Interface";
 import {
   BarChartOutlined,
   DatabaseOutlined,
@@ -66,3 +66,6 @@ export const side_navi: Navi_[] = [
     link: "/user",
   },
 ];
+
+export const AdminType: number = 1;
+export const UserType: number = 0;

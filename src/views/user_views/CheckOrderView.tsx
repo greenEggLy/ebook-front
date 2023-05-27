@@ -1,27 +1,34 @@
-import { CartItem } from "../../Interface";
-import { CheckHeaderSteps } from "../../components/CheckHeaderSteps";
-import { Button, Col, Row, Table } from "antd";
+import { CartItem } from "../../assets/Interface";
+import { CheckHeaderSteps } from "../../components/userComponents/CheckHeaderSteps";
+import { Button, Col, message, Row, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { Link, useLocation } from "react-router-dom";
-import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import "../../css/BuyView.css";
 import { getCartItems } from "../../services/CartService";
 import { createOrder } from "../../services/OrderService";
+import { getImgPath } from "../../utils/imgPathUtil";
 
 export const CheckOrderView = () => {
   const location = useLocation();
+  const navigation = useNavigate();
   const cartItem_ids: Set<number> = location.state.goods;
   const user_id = location.state.user_id;
-  const [goods, setGoods] = useState<CartItem[]>();
-  let whole_price: React.MutableRefObject<number> = useRef<number>(0);
+  const [goods, setGoods] = useState<CartItem[]>([]);
+  const [cost, setCost] = useState<number>(0);
   useEffect(() => {
-    getCartItems(
-      cartItem_ids,
-      (data: React.SetStateAction<CartItem[] | undefined>) => setGoods(data)
-    ).catch((err) => console.error(err));
-  }, [cartItem_ids]);
+    if (!cartItem_ids || !cartItem_ids.size) {
+      message.error("请选择购买商品", 1).then(() => navigation("/cart"));
+      return;
+    }
+    getCartItems(cartItem_ids).then((res) => {
+      setGoods(res);
+      let price = 0;
+      res.forEach((item) => (price += item.number * item.book.price));
+      setCost(price);
+    });
+  }, [cartItem_ids, navigation]);
 
-  useEffect(() => cal_price(), [goods]);
   const check_columns: ColumnsType<CartItem> = [
     {
       title: "图片",
@@ -30,7 +37,7 @@ export const CheckOrderView = () => {
       dataIndex: "items",
       render: (value, record) => (
         <div className={"order_pic"}>
-          <img alt={record.book.picture} src={record.book.picture} />
+          <img alt={record.book.title} src={getImgPath(record.book.cover)} />
         </div>
       ),
     },
@@ -66,15 +73,6 @@ export const CheckOrderView = () => {
     },
   ];
 
-  const cal_price = () => {
-    if (goods) {
-      whole_price.current = 0;
-      goods.map(
-        (good) => (whole_price.current += good.book.price * good.number)
-      );
-    }
-  };
-
   return (
     <>
       <CheckHeaderSteps />
@@ -84,21 +82,25 @@ export const CheckOrderView = () => {
       <Row className={"price_info"}>
         <Col span={20} />
         <Col span={4}>
-          <h1>{"总价: " + whole_price.current + "元"}</h1>
+          <h1>{"总价: " + cost + "元"}</h1>
         </Col>
       </Row>
       <Row>
         <Col span={20} />
-        <Link to={"/submitOrder"}>
-          <Button
-            className={"buy_button"}
-            onClick={() => {
-              createOrder(user_id, goods);
-            }}
-          >
-            {"提交订单"}
-          </Button>
-        </Link>
+        <Button
+          className={"buy_button"}
+          onClick={() => {
+            createOrder(user_id, goods).then((msg) => {
+              if (msg.status === 0)
+                message
+                  .success("订单提交成功", 1)
+                  .then(() => navigation("/submitOrder"));
+              else message.error(msg.msg, 1).then(() => navigation("/cart"));
+            });
+          }}
+        >
+          {"提交订单"}
+        </Button>
       </Row>
     </>
   );

@@ -4,8 +4,7 @@ import {
   ManUserInfo,
   Order,
   OrderItem,
-  User,
-} from "../Interface";
+} from "../../assets/Interface";
 import { Input, Space } from "antd";
 
 const { Search } = Input;
@@ -132,6 +131,7 @@ interface PropsOrder {
 
 export const OrderSearch = ({ allOrders, setFilter }: PropsOrder) => {
   const FilterWrapper = (item: Order, text: string) => {
+    if (item.buyer.name.includes(text)) return true;
     for (const good of item.items) {
       if (ContentFilter(good, text)) {
         return true;
@@ -143,15 +143,9 @@ export const OrderSearch = ({ allOrders, setFilter }: PropsOrder) => {
   const ContentFilter = (item: OrderItem, text: string) => {
     let title = item.book.title;
     let ISBN = item.book.isbn;
-    let authors = item.book.author;
-    let inAuthors = false;
-    for (let author of authors) {
-      if (author.indexOf(text) > -1) {
-        inAuthors = true;
-        break;
-      }
-    }
-    return inAuthors || title.indexOf(text) > -1 || ISBN.indexOf(text) > -1;
+    let author = item.book.author;
+
+    return title.includes(text) || ISBN.includes(text) || author.includes(text);
   };
 
   function onSearch(text: string) {

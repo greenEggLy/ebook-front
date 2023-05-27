@@ -1,41 +1,81 @@
 import { ColumnsType } from "antd/es/table";
-import { Order, OrderItem, backMsg, User } from "../../Interface";
+import { Order, OrderItem } from "../../assets/Interface";
 import { useNavigate } from "react-router-dom";
-import { OrderSearch } from "../../components/SearchBar";
-import React, { useEffect, useRef, useState } from "react";
-import { message, Typography } from "antd";
-import { getAllOrder } from "../../services/OrderService";
-import { AdminOrderList } from "../../components/AdminOrderList";
-import { emptySessionMsg, emptyUser } from "../../emptyData";
+import { OrderSearch } from "../../components/GlobalComponents/SearchBar";
+import React, { useEffect, useState } from "react";
+import { DatePicker, message, Typography } from "antd";
+import { getAllOrder, GetOrderByTime } from "../../services/OrderService";
 import { check_session } from "../../services/LoginService";
+import { adminSessionCheck } from "../../utils/sessionUtil";
+import { NestTableAdmin } from "../../components/adminComponents/NestTableAdmin";
+import dayjs from "dayjs";
+import moment from "moment/moment";
+import { OrderTab } from "../../components/GlobalComponents/OrderTab";
+import { date_forward } from "../../utils/DateUtil";
 
 const { Title } = Typography;
+const { RangePicker } = DatePicker;
 
 export const OrdersView_admin = () => {
   const navigation = useNavigate();
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
   const [allOrder, setAllOrder] = useState<Order[]>([]);
   const [filterOrders, setFilterOrders] = useState<Order[]>([]);
 
+  const [isDiy, setIsDiy] = useState<boolean>(false);
+  const [laterDate, setLaterDate] = useState<Date>(new Date());
+  const [earlierDate, setEarlierDate] = useState<Date>(new Date());
+  const [showDate, setShowDate] = useState<[dayjs.Dayjs, dayjs.Dayjs]>();
+  const [showAll, setShowAll] = useState(true);
+
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        if (msg_ref.current.data.userType < 1)
-          message.error("没有管理员权限！").then(() => navigation("/"));
-        else {
-          getAllOrder((data: Order[]) => {
-            data = data.sort((a, b) => {
-              return b.id - a.id;
-            });
-            setAllOrder(data);
-            setFilterOrders(data);
-          }).catch((err) => console.error(err));
-        }
-      } else {
-        message.error(msg_ref.current.msg).then(() => navigation("/login"));
+    check_session().then((res) => {
+      let status = adminSessionCheck(res);
+      if (!status.ok) {
+        message.error(status.msg, 1).then(() => navigation(status.path));
+        return;
       }
+      getAllOrder().then((data) => {
+        data = data.sort((a, b) => {
+          if (a.id > b.id) return -1;
+          if (a.id < b.id) return 1;
+          return 0;
+        });
+        setAllOrder(data);
+        setFilterOrders(data);
+      });
     });
   }, [navigation]);
+
+  useEffect(() => {
+    if (showAll) {
+      getAllOrder()
+        .then((data) => {
+          data = data.sort((a, b) => {
+            if (a.id > b.id) return -1;
+            if (a.id < b.id) return 1;
+            return 0;
+          });
+          setAllOrder(data);
+          setFilterOrders(data);
+        })
+        .then(() => window.location.reload);
+    } else if (earlierDate && laterDate) {
+      GetOrderByTime(
+        moment(earlierDate).format("YYYY-MM-DD"),
+        moment(laterDate).format("YYYY-MM-DD")
+      )
+        .then((data) => {
+          data = data.sort((a, b) => {
+            if (a.id > b.id) return -1;
+            if (a.id < b.id) return 1;
+            return 0;
+          });
+          setAllOrder(data);
+          setFilterOrders(data);
+        })
+        .then(() => window.location.reload);
+    }
+  }, [earlierDate, laterDate, showAll]);
 
   const order_columns: ColumnsType<OrderItem> = [
     {
@@ -81,12 +121,29 @@ export const OrdersView_admin = () => {
       <div className={"order_title"}>
         <Title>{"订单"}</Title>
       </div>
+      <div style={{ marginBottom: "20px" }}>
+        <OrderTab
+          setEarlierDate={(day: Date) => setEarlierDate(day)}
+          setLaterDate={(day: Date) => setLaterDate(day)}
+          isDiy={isDiy}
+          setIsDiy={setIsDiy}
+          setShowAll={setShowAll}
+        />
+        <RangePicker
+          value={showDate}
+          onChange={(date_raw, date_format) => {
+            // @ts-ignore
+            setShowDate(date_raw);
+            setEarlierDate(new Date(date_format[0]));
+            setLaterDate(date_forward(date_format[1], 1));
+            setIsDiy(true);
+          }}
+        />
+      </div>
       <div className={"search_bar"}>
         <OrderSearch allOrders={allOrder} setFilter={setFilterOrders} />
       </div>
-      {filterOrders.map((order) => (
-        <AdminOrderList order={order} order_columns={order_columns} />
-      ))}
+      <NestTableAdmin all_order={filterOrders} order_columns={order_columns} />
     </div>
   );
 };

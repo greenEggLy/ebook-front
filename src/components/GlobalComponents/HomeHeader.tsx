@@ -1,9 +1,9 @@
-import "../css/HomeView.css";
+import "../../css/HomeView.css";
 import { Col, Row, Space } from "antd";
-import logo from "../assets/logo.svg";
-import logoFont from "../assets/logo-name.svg";
+import logo from "../../assets/logo.svg";
+import logoFont from "../../assets/logo-name.svg";
 import { SmallUser } from "./SmallUser";
-import { User } from "../Interface";
+import { User } from "../../assets/Interface";
 import { Link } from "react-router-dom";
 
 interface Props {
@@ -16,8 +16,8 @@ export const HomeHeader = ({ user, collapsed }: Props) => {
     <div id="header">
       <div id="header-content">
         <Row>
-          <Col span={collapsed ? 1 : 3} />
-          <Col span={collapsed ? 18 : 16}>
+          <Col span={collapsed ? 1 : 4} />
+          <Col span={collapsed ? 18 : 15}>
             <Space className={"header_title"}>
               <Link to={"/"}>
                 <img

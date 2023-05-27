@@ -1,10 +1,10 @@
-import BookList from "../../components/BookList";
-import { BookSearch } from "../../components/SearchBar";
+import BookList from "../../components/userComponents/BookList";
+import { BookSearch } from "../../components/GlobalComponents/SearchBar";
 import { Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import "../../css/BooksView.css";
-import { Book } from "../../Interface";
-import { get_all_books } from "../../services/BookService";
+import { Book } from "../../assets/Interface";
+import { GetAllBook } from "../../services/BookService";
 
 const { Title } = Typography;
 
@@ -12,10 +12,10 @@ export const BooksView = () => {
   const [allBooks, setAllBooks] = useState<Book[]>([]);
   const [filterData, setFilterData] = useState<Book[]>([]);
   useEffect(() => {
-    get_all_books((data: Book[]) => {
+    GetAllBook().then((data: Book[]) => {
       setAllBooks(data);
       setFilterData(data);
-    }).catch((err) => console.error(err));
+    });
   }, []);
   return (
     <div>

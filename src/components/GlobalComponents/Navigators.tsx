@@ -1,7 +1,6 @@
 import { Menu } from "antd";
-import { side_navi, side_navi_admin } from "../data";
 import { Link } from "react-router-dom";
-import { Navi_, User } from "../Interface";
+import { Navi_ } from "../../assets/Interface";
 
 interface Props {
   navi: Navi_[];

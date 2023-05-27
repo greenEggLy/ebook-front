@@ -1,22 +1,25 @@
-import { DatePicker, message, Tabs, TabsProps, Typography } from "antd";
-import { useEffect, useRef, useState } from "react";
-import { backMsg, Stat_Money, Stat_Sales, User } from "../../Interface";
-import { getUser } from "../../services/UserService";
+import { Col, DatePicker, message, Row, Typography } from "antd";
+import { useEffect, useState } from "react";
+import {
+  StatBookMoney,
+  StatBookSales,
+  StatUserMoney,
+} from "../../assets/Interface";
 import { useNavigate } from "react-router-dom";
-import {
-  get_sorted_money_all,
-  get_sorted_sales_all,
-} from "../../services/OrderService";
 import moment from "moment";
-import {
-  BarChart_Money,
-  BarChart_Sales,
-} from "../../components/BarChart_Sales";
+import { BarChart_Sales } from "../../components/adminComponents/BarChart_Sales";
 import { check_session } from "../../services/LoginService";
-import { emptySessionMsg } from "../../emptyData";
 import { date_back, date_forward } from "../../utils/DateUtil";
 import dayjs from "dayjs";
-import { StatTab } from "../../components/StatTab";
+import { StatTab } from "../../components/adminComponents/StatTab";
+import { adminSessionCheck } from "../../utils/sessionUtil";
+import { BarChart_Money } from "../../components/adminComponents/BarChart_Money";
+import {
+  StatBookByMoney,
+  StatBookBySales,
+  StatUserByMoney,
+} from "../../services/StatService";
+import { BarChart_UserMoney } from "../../components/adminComponents/BarChart_UserMoney";
 
 const { Title } = Typography;
 
@@ -24,47 +27,45 @@ const { RangePicker } = DatePicker;
 
 export const StatView = () => {
   const navigation = useNavigate();
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
 
   const [isDiy, setIsDiy] = useState<boolean>(false);
-  const [laterDate, setLaterDate] = useState<Date>(new Date());
-  const [earlierDate, setEarlierDate] = useState<Date>(new Date());
-  const [salesFilter, setSalesFilter] = useState<Stat_Sales[]>([]);
-  const [moneyFilter, setMoneyFilter] = useState<Stat_Money[]>([]);
+  const [laterDate, setLaterDate] = useState<Date>(date_back(-1));
+  const [earlierDate, setEarlierDate] = useState<Date>(date_back(6));
+  const [salesFilter, setSalesFilter] = useState<StatBookSales[]>([]);
+  const [moneyFilter, setMoneyFilter] = useState<StatBookMoney[]>([]);
+  const [userFilter, setUserFilter] = useState<StatUserMoney[]>([]);
   const [showDate, setShowDate] = useState<[dayjs.Dayjs, dayjs.Dayjs]>();
 
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        if (msg_ref.current.data.userType < 1)
-          message.error("没有管理员权限！").then(() => navigation("/"));
-        else {
-          setEarlierDate(date_back(7));
-          setLaterDate(date_back(0));
-        }
-      } else {
-        message.error(msg_ref.current.msg).then(() => navigation("/login"));
-      }
+    check_session().then((res) => {
+      let status = adminSessionCheck(res);
+      if (!status.ok)
+        message.error(status.msg, 1).then(() => navigation(status.path));
     });
   }, [navigation]);
 
   useEffect(() => {
     if (earlierDate && laterDate) {
-      get_sorted_sales_all(
+      StatBookBySales(
         moment(earlierDate).format("YYYY-MM-DD"),
-        moment(laterDate).format("YYYY-MM-DD"),
-        (data: Stat_Sales[]) => setSalesFilter(data)
-      ).then(window.location.reload);
-    }
-  }, [earlierDate, laterDate]);
-
-  useEffect(() => {
-    if (earlierDate && laterDate) {
-      get_sorted_money_all(
-        moment(earlierDate).format("YYYY-MM-DD"),
-        moment(laterDate).format("YYYY-MM-DD"),
-        (data: Stat_Money[]) => setMoneyFilter(data)
-      ).then(window.location.reload);
+        moment(laterDate).format("YYYY-MM-DD")
+      )
+        .then((res) => setSalesFilter(res))
+        .then(() =>
+          StatBookByMoney(
+            moment(earlierDate).format("YYYY-MM-DD"),
+            moment(laterDate).format("YYYY-MM-DD")
+          )
+        )
+        .then((res) => setMoneyFilter(res))
+        .then(() =>
+          StatUserByMoney(
+            moment(earlierDate).format("YYYY-MM-DD"),
+            moment(laterDate).format("YYYY-MM-DD")
+          )
+        )
+        .then((res) => setUserFilter(res))
+        .then(() => window.location.reload);
     }
   }, [earlierDate, laterDate]);
 
@@ -89,8 +90,19 @@ export const StatView = () => {
           setIsDiy(true);
         }}
       />
-      <BarChart_Sales sales_data={salesFilter} max_number={5} />
-      <BarChart_Money money_data={moneyFilter} max_number={5} />
+      <Row>
+        <Col span={12}>
+          <BarChart_Sales sales_data={salesFilter} max_number={5} />
+        </Col>
+        <Col span={12}>
+          <BarChart_Money money_data={moneyFilter} max_number={5} />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <BarChart_UserMoney stat_data={userFilter} max_number={5} />
+        </Col>
+      </Row>
     </div>
   );
 };

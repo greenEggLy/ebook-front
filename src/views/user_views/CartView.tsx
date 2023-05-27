@@ -1,50 +1,45 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Col, message, Row, Table, Typography } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { Book, CartItem, backMsg, User } from "../../Interface";
+import { AuthInfo, Book, CartItem } from "../../assets/Interface";
 import { Link, useNavigate } from "react-router-dom";
-import { CartSearch } from "../../components/SearchBar";
+import { CartSearch } from "../../components/GlobalComponents/SearchBar";
 import "../../css/CartView.css";
 import "../../css/BooksView.css";
 import {
   addCartItemNum,
   deleteCartItem,
-  get_cart_by_user,
+  GetUserCart,
   minusCartItemNum,
 } from "../../services/CartService";
-import { get_user, getUser } from "../../services/UserService";
-import { emptySessionMsg, emptyUser } from "../../emptyData";
+import { EmptyAuth } from "../../assets/data/emptyData";
 import { check_session } from "../../services/LoginService";
+import { getImgPath } from "../../utils/imgPathUtil";
+import { sessionCheck } from "../../utils/sessionUtil";
 
 const { Title } = Typography;
 
 export const CartView = () => {
   const navigation = useNavigate();
-  const [user, setUser] = useState<User>(emptyUser);
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
+  const [user, setUser] = useState<AuthInfo>(EmptyAuth);
   const [allCart, setAllCart] = useState<CartItem[]>([]);
   const [filterCart, setFilterCart] = useState<CartItem[]>([]);
-  const [chooseGood, setChooseGood] = useState<Set<number>>(new Set<number>());
+  const [chooseGood] = useState<Set<number>>(new Set<number>());
 
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        get_user(msg_ref.current.data.userId, (user: User) =>
-          setUser(user)
-        ).catch((err) => console.error(err));
-      } else {
-        message.error(msg_ref.current.msg).then(() => navigation("/login"));
+    check_session().then((res) => {
+      let status = sessionCheck(res);
+      if (!status.ok) {
+        message.error(status.msg, 1).then(() => navigation(status.path));
+        return;
       }
-    });
-  }, [navigation]);
-
-  useEffect(() => {
-    if (user)
-      get_cart_by_user(user.id, (data: CartItem[]) => {
+      setUser(res.data);
+      GetUserCart(res.data.id).then((data) => {
         setAllCart(data);
         setFilterCart(data);
-      }).catch((err) => console.error(err));
-  }, [user]);
+      });
+    });
+  }, [navigation]);
 
   const cart_columns: ColumnsType<CartItem> = [
     {
@@ -68,7 +63,7 @@ export const CartView = () => {
       render: (book: Book) => (
         <div className={"cart_pic"}>
           <Link to={"/book/" + book.id}>
-            <img alt={book.picture} src={book.picture} />
+            <img alt={book.title} src={getImgPath(book.cover)} />
           </Link>
         </div>
       ),
@@ -107,10 +102,12 @@ export const CartView = () => {
             onClick={() => {
               minusCartItemNum(record.id, 1).then(() => {
                 if (user)
-                  get_cart_by_user(user.id, (data: CartItem[]) => {
-                    setAllCart(data);
-                    setFilterCart(data);
-                  }).then(window.location.reload);
+                  GetUserCart(user.id)
+                    .then((cart) => {
+                      setAllCart(cart);
+                      setFilterCart(cart);
+                    })
+                    .then(() => window.location.reload);
               });
             }}
           >
@@ -122,10 +119,12 @@ export const CartView = () => {
             onClick={() => {
               addCartItemNum(record.id, 1).then(() => {
                 if (user)
-                  get_cart_by_user(user.id, (data: CartItem[]) => {
-                    setAllCart(data);
-                    setFilterCart(data);
-                  }).then(window.location.reload);
+                  GetUserCart(user.id)
+                    .then((data) => {
+                      setAllCart(data);
+                      setFilterCart(data);
+                    })
+                    .then(window.location.reload);
               });
             }}
           >
@@ -143,11 +142,8 @@ export const CartView = () => {
           className={"del_button"}
           onClick={() => {
             deleteCartItem(record.id).then(() => {
-              if (user)
-                get_cart_by_user(user.id, (data: CartItem[]) => {
-                  setAllCart(data);
-                  setFilterCart(data);
-                }).then(window.location.reload);
+              let filter = filterCart.filter((item) => item.id !== record.id);
+              setFilterCart(filter);
             });
           }}
         >

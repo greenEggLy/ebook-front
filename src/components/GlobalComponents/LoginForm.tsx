@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Button, Checkbox, Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { login, signup } from "../services/LoginService";
-import { backMsg } from "../Interface";
+import { login, signup } from "../../services/LoginService";
+import { Msg } from "../../assets/Interface";
 
 export const LoginForm = () => {
   const [remember, setRemember] = useState(false);
@@ -11,11 +11,11 @@ export const LoginForm = () => {
   const checkUser = async () => {
     const usr_name = form.getFieldValue(["username"]);
     const usr_password = form.getFieldValue(["password"]);
-    const callback = (data: backMsg) => {
+    const callback = (data: Msg) => {
       if (data && data.status >= 0)
         localStorage.setItem("user", data.data.username);
     };
-    await login(usr_name, usr_password, (data: backMsg) => {
+    await login(usr_name, usr_password, (data: Msg) => {
       callback(data);
       if (data.status < 0) {
         message.error(data.msg, 1);
@@ -75,17 +75,15 @@ export const SignUpForm = () => {
     const username = form.getFieldValue(["username"]);
     const password = form.getFieldValue(["password"]);
     const email = form.getFieldValue(["email"]);
-    let msg: backMsg;
+    let msg: Msg;
     if (!username || !password || !email) return;
-    signup(username, email, password, (data: backMsg) => (msg = data)).then(
-      () => {
-        if (msg.status >= 0) {
-          message.success(msg.msg, 0.5).then(() => navigate("/login"));
-        } else {
-          message.error(msg.msg, 1);
-        }
+    signup(username, email, password, (data: Msg) => (msg = data)).then(() => {
+      if (msg.status >= 0) {
+        message.success(msg.msg, 0.5).then(() => navigate("/login"));
+      } else {
+        message.error(msg.msg, 1);
       }
-    );
+    });
   };
 
   return (

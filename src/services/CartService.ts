@@ -1,30 +1,31 @@
 import { apiUrl } from "../utils/global_config";
-import { getRequest, postRequest } from "../utils/ajax";
+import { postRequest } from "../utils/ajax";
+import { CartItem } from "../assets/Interface";
+import { getRequestInit } from "./Global";
 
-export const get_cart_by_user = async (user_id: number, callback: any) => {
-  if (user_id !== undefined) {
-    const url = apiUrl + "/cart/get/" + user_id.toString();
-    await getRequest(url, callback);
-  }
+export const GetUserCart = async (user_id: number): Promise<CartItem[]> => {
+  const url = apiUrl + "/cart/get/" + user_id.toString();
+  return await fetch(url, getRequestInit())
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 };
 
 export const getCartItems = async (
-  cartItem_ids: Set<number>,
-  callback: any
-) => {
-  if (cartItem_ids) {
-    const prefix = "id=";
-    let is_first = true;
-    let url = apiUrl + "/cart/get-items";
-    const id = cartItem_ids[Symbol.iterator]();
-    for (let i = 0; i < cartItem_ids.size; i++) {
-      if (is_first) {
-        is_first = false;
-        url += "?" + prefix + id.next().value;
-      } else url += "&" + prefix + id.next().value;
-    }
-    await getRequest(url, callback);
+  cartItem_ids: Set<number>
+): Promise<CartItem[]> => {
+  const prefix = "id=";
+  let is_first = true;
+  let url = apiUrl + "/cart/get-items";
+  const id = cartItem_ids[Symbol.iterator]();
+  for (let i = 0; i < cartItem_ids.size; i++) {
+    if (is_first) {
+      is_first = false;
+      url += "?" + prefix + id.next().value;
+    } else url += "&" + prefix + id.next().value;
   }
+  return fetch(url, getRequestInit())
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 };
 
 export const addCartItem = async (

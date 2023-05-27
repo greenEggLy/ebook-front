@@ -9,20 +9,14 @@ import {
   Table,
   Typography,
 } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import { OrderSearch, UserSearch } from "../../components/SearchBar";
-import { ManUserInfo, OrderItem, backMsg, User } from "../../Interface";
-import {
-  get_all_users,
-  get_user_info,
-  getUser,
-  mod_user_info,
-} from "../../services/UserService";
+import React, { useEffect, useState } from "react";
+import { UserSearch } from "../../components/GlobalComponents/SearchBar";
+import { ManUserInfo, User } from "../../assets/Interface";
+import { GetAllUsers, ModUserInfo_ADMIN } from "../../services/UserService";
 import { ColumnsType } from "antd/es/table";
-import { Text } from "recharts";
 import { check_session } from "../../services/LoginService";
-import { emptySessionMsg, emptyUser } from "../../emptyData";
 import { useNavigate } from "react-router-dom";
+import { adminSessionCheck } from "../../utils/sessionUtil";
 
 const { Title } = Typography;
 
@@ -35,10 +29,8 @@ const emptyData: ManUserInfo = {
 };
 
 export const ManUserView = () => {
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
   const navigation = useNavigate();
 
-  const [user, setUser] = useState<User>(emptyUser);
   const [allUsers, setAllUsers] = useState<ManUserInfo[]>([]);
   const [filterUsers, setFilterUsers] = useState<ManUserInfo[]>([]);
   const [modalData, setModalData] = useState<ManUserInfo>(emptyData);
@@ -49,28 +41,16 @@ export const ManUserView = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        if (msg_ref.current.data.userType < 1)
-          message.error("没有管理员权限！").then(() => navigation("/"));
-        else {
-          get_all_users((data: ManUserInfo[]) => {
-            setAllUsers(data);
-            setFilterUsers(data);
-          }).catch((err) => console.error(err));
-        }
-      } else {
-        message.error(msg_ref.current.msg).then(() => navigation("/login"));
-      }
+    check_session().then((res) => {
+      let status = adminSessionCheck(res);
+      if (!status.ok)
+        message.error(status.msg, 1).then(() => navigation(status.path));
+      GetAllUsers().then((res) => {
+        setAllUsers(res);
+        setFilterUsers(res);
+      });
     });
   }, [navigation]);
-
-  // useEffect(() => {
-  //   get_all_users((data: ManUserInfo[]) => {
-  //     setAllUsers(data);
-  //     setFilterUsers(data);
-  //   }).catch((err) => console.error(err));
-  // }, []);
 
   const man_user_columns: ColumnsType<ManUserInfo> = [
     {
@@ -125,7 +105,7 @@ export const ManUserView = () => {
     modalData.email = email_input;
     modalData.is_admin = is_admin;
     modalData.is_blocked = is_blocked;
-    mod_user_info(modalData)
+    ModUserInfo_ADMIN(modalData)
       .then(() => message.success("修改信息成功！", 0.5))
       .then(() => setShowModal(false))
       .then(window.location.reload);

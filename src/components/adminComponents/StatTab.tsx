@@ -1,6 +1,6 @@
 import { Tabs, TabsProps } from "antd";
-import { date_back } from "../utils/DateUtil";
-import { useEffect, useState } from "react";
+import { date_back } from "../../utils/DateUtil";
+import React, { useEffect, useState } from "react";
 
 interface Props {
   setEarlierDate: any;
@@ -39,14 +39,14 @@ export const StatTab = ({
     if (key === "1") {
       setActiveKey("1");
       setIsDiy(false);
-      setEarlierDate(date_back(7));
+      setEarlierDate(date_back(6));
       setLaterDate(date_back(-1));
       return;
     }
     if (key === "2") {
       setActiveKey("2");
       setIsDiy(false);
-      setEarlierDate(date_back(30));
+      setEarlierDate(date_back(29));
       setLaterDate(date_back(-1));
       return;
     }

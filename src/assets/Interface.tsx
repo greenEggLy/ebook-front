@@ -1,6 +1,7 @@
 import React from "react";
 
 export interface Book {
+  cover: string;
   id: number;
   title: string;
   author: string;
@@ -32,12 +33,12 @@ export interface Order {
   buyer: User;
 }
 
-export interface Stat_Sales {
+export interface StatBookSales {
   book_name: string;
   sales: number;
 }
 
-export interface Stat_Money {
+export interface StatBookMoney {
   book_name: string;
   money: number;
 }
@@ -61,16 +62,16 @@ export interface Navi_ {
   link: string;
 }
 
-interface backData {
-  userId: number;
+export interface AuthInfo {
+  id: number;
   username: string;
-  userType: number;
+  is_admin: number;
 }
 
-export interface backMsg {
+export interface Msg {
   status: number;
   msg: string;
-  data: backData;
+  data: AuthInfo;
 }
 
 export interface ManUserInfo {
@@ -95,7 +96,12 @@ export interface SignUpForm {
 export interface UserUinfo {
   id: number;
   username: string;
-  avatar: string;
   about: string;
   email: string;
+}
+
+export interface StatUserMoney {
+  id: number;
+  username: string;
+  money: number;
 }

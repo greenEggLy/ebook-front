@@ -1,16 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, message, theme } from "antd";
-import { SideNavi } from "../components/Navigators";
+import { SideNavi } from "../components/GlobalComponents/Navigators";
 import { Outlet, useNavigate } from "react-router-dom";
 import "../css/HomeView.css";
 import { ToolFilled } from "@ant-design/icons";
-import { HomeHeader } from "../components/HomeHeader";
-import { Navi_, backMsg, User } from "../Interface";
-import { get_user, getUser } from "../services/UserService";
+import { HomeHeader } from "../components/GlobalComponents/HomeHeader";
+import { Navi_, User } from "../assets/Interface";
+import { GetUser } from "../services/UserService";
 import { Footer } from "antd/es/layout/layout";
-import { emptySessionMsg, emptyUser } from "../emptyData";
+import { EmptyUser } from "../assets/data/emptyData";
 import { check_session } from "../services/LoginService";
-import { side_navi, side_navi_admin } from "../data";
+import { side_navi, side_navi_admin } from "../assets/data/data";
+import { sessionCheck } from "../utils/sessionUtil";
 
 const { Header, Content, Sider } = Layout;
 
@@ -19,27 +20,24 @@ export const HomeView = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   const navigation = useNavigate();
-  const msg_ref = useRef<backMsg>(emptySessionMsg);
 
-  const [user, setUser] = useState<User>(emptyUser);
+  const [user, setUser] = useState<User>(EmptyUser);
   const [navi, setNavi] = useState<Navi_[]>([]);
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
   useEffect(() => {
-    check_session((data: backMsg) => (msg_ref.current = data)).then(() => {
-      if (msg_ref.current.status >= 0) {
-        get_user(msg_ref.current.data.userId, (data: User) => {
-          setUser(data);
-          if (data.is_admin) setNavi(side_navi_admin);
-          else setNavi(side_navi);
-        }).catch((err) => console.error(err));
-      } else {
-        message.error(msg_ref.current.msg, 1).then(() => navigation("/login"));
-      }
+    check_session().then((res) => {
+      let status = sessionCheck(res);
+      if (!status.ok)
+        message.error(status.msg, 1).then(() => navigation(status.path));
+      if (res.data.is_admin) setNavi(side_navi_admin);
+      else setNavi(side_navi);
+      GetUser(res.data.id).then((res) => setUser(res));
     });
   }, [navigation]);
 
-  if (user.id !== 0)
+  if (user.id === 0) return <div></div>;
+  else
     return (
       <Layout>
         <Header className="header">
@@ -89,5 +87,4 @@ export const HomeView = () => {
         </Layout>
       </Layout>
     );
-  else return <></>;
 };

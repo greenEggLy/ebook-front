@@ -1,47 +1,24 @@
 import { apiUrl, postJSONRequestInit } from "../utils/global_config";
-import { getRequest, postRequest } from "../utils/ajax";
-import { ManUserInfo, backMsg, UserUinfo } from "../Interface";
-import { check_session } from "./LoginService";
-import { message } from "antd";
+import { ManUserInfo, User, UserUinfo } from "../assets/Interface";
+import { getRequestInit } from "./Global";
 
-export const getUser = async (username: string, callback: any) => {
-  const url = apiUrl + "/user/get/" + username;
-  await getRequest(url, callback);
+export const GetUser = async (id: number): Promise<User> => {
+  const url = apiUrl + "/user/" + id.toString();
+  return await fetch(url, getRequestInit())
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 };
 
-export const get_user = async (id: number, callback: any) => {
-  const url = apiUrl + "/user/get/" + id.toString();
-  await getRequest(url, callback);
-};
-
-export const mod_user_name = async (user_id: number, username: string) => {
-  let url =
-    apiUrl +
-    "/modUserName?user_id=" +
-    user_id.toString() +
-    "&username=" +
-    username;
-  await postRequest(url);
-};
-
-export const mod_user_about = async (user_id: number, about: string) => {
-  let url =
-    apiUrl + "/modUserAbout?user_id=" + user_id.toString() + "&about=" + about;
-  await postRequest(url);
-};
-
-export const mode_user_uinfo = async (
+export const ModUserInfo_USER = async (
   user_id: number,
   username: string,
-  avatar: string,
   about: string,
   email: string
 ) => {
-  let url = apiUrl + "/user/uinfo/mod";
+  let url = apiUrl + "/user/uinfo";
   let u_info: UserUinfo = {
     id: user_id,
     username: username,
-    avatar: avatar,
     about: about,
     email: email,
   };
@@ -49,18 +26,27 @@ export const mode_user_uinfo = async (
   await fetch(url, postJSONRequestInit(json));
 };
 
-export const get_all_users = async (callback: any) => {
-  let url = apiUrl + "/user/info/get/all";
-  await getRequest(url, callback);
+export const GetAllUsers = async (): Promise<ManUserInfo[]> => {
+  let url = apiUrl + "/user/info/all";
+  return await fetch(url, getRequestInit())
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 };
 
-export const mod_user_info = async (user_info: ManUserInfo) => {
+export const ModUserInfo_ADMIN = async (user_info: ManUserInfo) => {
   let url = apiUrl + "/user/info/mod";
   const json = JSON.stringify(user_info);
   await fetch(url, postJSONRequestInit(json));
 };
 
-export const get_user_info = async (user_id: number, callback: any) => {
-  let url = apiUrl + "/user/info/get/" + user_id.toString();
-  await getRequest(url, callback);
+export const ModUserAvatar = async (
+  user_id: number,
+  avatar: string
+): Promise<Response> => {
+  let url = apiUrl + "/user/avatar";
+  let body = {
+    id: user_id,
+    avatar: avatar,
+  };
+  return await fetch(url, postJSONRequestInit(JSON.stringify(body)));
 };

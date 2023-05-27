@@ -1,5 +1,5 @@
 import { List } from "antd";
-import { Book } from "../Interface";
+import { Book } from "../../assets/Interface";
 import { BookCard } from "./BookCard";
 import { Link } from "react-router-dom";
 

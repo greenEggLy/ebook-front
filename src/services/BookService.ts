@@ -1,28 +1,33 @@
-import { getRequest, postRequest } from "../utils/ajax";
+import { postRequest } from "../utils/ajax";
 import { apiUrl, postJSONRequestInit } from "../utils/global_config";
 import React from "react";
-import { Book } from "../Interface";
+import { Book } from "../assets/Interface";
+import { getRequestInit } from "./Global";
 
-export const get_one_book = async (id: number, callback: any) => {
-  const url = apiUrl + "/getBook/" + id.toString();
-  await getRequest(url, callback);
+export const GetBook = async (id: number): Promise<Book> => {
+  const url = apiUrl + "/book/" + id.toString();
+  return await fetch(url, getRequestInit())
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 };
 
-export const get_all_books = async (callback: any) => {
-  const url = apiUrl + "/getBooks";
-  await getRequest(url, callback);
+export const GetAllBook = async (): Promise<Book[]> => {
+  const url = apiUrl + "/book/all";
+  return await fetch(url, getRequestInit())
+    .then((res) => res.json())
+    .catch((err) => console.error(err));
 };
 
-export const modBookPic = async (id: number, pic_url: string) => {
-  const url = apiUrl + "/book/mod/picture";
+export const modBookCover = async (id: number, cover: string) => {
+  const url = apiUrl + "/book/cover";
   let form = new FormData();
   form.append("book_id", id.toString());
-  form.append("pic_url", pic_url);
+  form.append("cover", cover);
   const postOpt: RequestInit = {
     method: "POST",
     body: form,
   };
-  await fetch(url, postOpt);
+  return await fetch(url, postOpt);
 };
 
 export const delBook = async (id: React.Key) => {
@@ -30,7 +35,7 @@ export const delBook = async (id: React.Key) => {
   await postRequest(url);
 };
 
-export const addBook = async (newBook: Book) => {
+export const addBook = async (newBook: Book): Promise<Response> => {
   const url = apiUrl + "/book/add";
   let json: Book = {
     id: 0,
@@ -42,13 +47,16 @@ export const addBook = async (newBook: Book) => {
     stock: newBook.stock,
     sales: 0,
     picture: newBook.picture,
+    cover: newBook.cover,
   };
   let body = JSON.stringify(json);
-  await fetch(url, postJSONRequestInit(body));
+  return await fetch(url, postJSONRequestInit(body));
+  // .then((res) => res.json())
+  // .catch((err) => console.error(err));
 };
 
-export const modBook = async (book: Book) => {
-  const url = apiUrl + "/book/mod";
+export const modBook = async (book: Book): Promise<Response> => {
+  const url = apiUrl + "/book";
   let body = JSON.stringify(book);
-  await fetch(url, postJSONRequestInit(body));
+  return await fetch(url, postJSONRequestInit(body));
 };

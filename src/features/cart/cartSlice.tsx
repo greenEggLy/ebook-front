@@ -24,7 +24,7 @@ export const cartSlice = createSlice({
     },
 
     /**
-     * 		so what is PayloadAction...
+     *        so what is PayloadAction...
      */
     setValue: (state, action: PayloadAction<number>) => {
       state.info.filter((item) => item.id === action.payload)[0].number =
