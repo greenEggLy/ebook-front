@@ -23,6 +23,7 @@ export const emptyBook: Book = {
   pub: "",
   author: "",
   cover: "",
+  deleted: false,
 };
 
 export const EmptyAuth: AuthInfo = {

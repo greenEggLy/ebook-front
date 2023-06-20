@@ -11,6 +11,7 @@ export interface Book {
   stock: number;
   sales: number;
   picture: string;
+  deleted?: boolean;
 }
 
 export interface CartItem {

@@ -162,7 +162,10 @@ export const CartView = () => {
         <div className={"search_bar"}>
           <CartSearch allData={allCart} setFilter={setFilterCart} />
         </div>
-        <Table columns={cart_columns} dataSource={filterCart}></Table>
+        <Table
+          columns={cart_columns}
+          dataSource={filterCart.filter((item) => !item.book.deleted)}
+        ></Table>
         <Row>
           <Col span={21} />
           <Button

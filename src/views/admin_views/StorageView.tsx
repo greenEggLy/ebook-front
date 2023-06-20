@@ -66,6 +66,7 @@ const newData: Book = {
   stock: 0,
   sales: 0,
   cover: "",
+  deleted: false,
 };
 
 interface EditableCellProps {
@@ -179,6 +180,7 @@ export const StorageView = () => {
       if (key > 0) DelBook(key).catch((err) => console.error(err));
       if (key === 0) setDisButton(true);
       setAllData(newData);
+      window.location.reload();
     }
   };
 
@@ -228,6 +230,7 @@ export const StorageView = () => {
           let msg: Msg = await response.json();
           if (msg.status === 0) {
             message.success("添加成功！", 1);
+            window.location.reload();
           } else {
             message.error(msg.msg, 1);
           }
