@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {AuthInfo, StatBookMoney, StatBookSales} from "../../assets/Interface";
+import {IAuthInfo, IStatBookMoney, IStatBookSales} from "../../assets/Interface";
 import {EmptyAuth} from "../../assets/data/emptyData";
 import {CheckSession} from "../../services/LoginService";
 import {Col, DatePicker, message, Row, Typography} from "antd";
@@ -18,13 +18,13 @@ const {RangePicker} = DatePicker;
 
 export const DataView = () => {
     const navigation = useNavigate();
-    const [user, setUser] = useState<AuthInfo>(EmptyAuth);
+    const [user, setUser] = useState<IAuthInfo>(EmptyAuth);
     const [isDiy, setIsDiy] = useState<boolean>(false);
     const [laterDate, setLaterDate] = useState<Date>(date_back(-1));
     const [earlierDate, setEarlierDate] = useState<Date>(date_back(6));
     const [showDate, setShowDate] = useState<[dayjs.Dayjs, dayjs.Dayjs]>();
-    const [salesFilter, setSalesFilter] = useState<StatBookSales[]>([]);
-    const [moneyFilter, setMoneyFilter] = useState<StatBookMoney[]>([]);
+    const [salesFilter, setSalesFilter] = useState<IStatBookSales[]>([]);
+    const [moneyFilter, setMoneyFilter] = useState<IStatBookMoney[]>([]);
     const [totalNum, setTotalNum] = useState<number>(0);
     const [totalMoney, setTotalMoney] = useState<number>(0);
 

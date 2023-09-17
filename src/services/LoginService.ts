@@ -1,5 +1,5 @@
 import {apiUrl, postJSONRequestInit, postRequestInit,} from "../utils/global_config";
-import {LogInForm, Msg, SignUpForm} from "../assets/Interface";
+import {ILogInForm, IMsg, ISignUpForm} from "../assets/Interface";
 import {LoginFaultMsg} from "../assets/data/emptyData";
 
 export const LoginService = async (
@@ -7,7 +7,7 @@ export const LoginService = async (
     password: string,
     callback: any
 ) => {
-    let body: LogInForm = {
+    let body: ILogInForm = {
         username: username,
         password: password,
     };
@@ -20,7 +20,7 @@ export const LoginService = async (
         });
 };
 
-export const CheckSession = async (): Promise<Msg> => {
+export const CheckSession = async (): Promise<IMsg> => {
     let username = localStorage.getItem("user");
     if (username === null) {
         return LoginFaultMsg;
@@ -31,10 +31,10 @@ export const CheckSession = async (): Promise<Msg> => {
     else return await response.json();
 };
 
-export const LogoutService = async () => {
+export const LogoutService = () => {
     const url = apiUrl + "/logout";
     localStorage.clear();
-    await fetch(url, postRequestInit);
+    return fetch(url, postRequestInit);
 };
 
 export const SignupService = async (
@@ -43,7 +43,7 @@ export const SignupService = async (
     password: string
 ): Promise<Response> => {
     const url = apiUrl + "/signup";
-    const json: SignUpForm = {
+    const json: ISignUpForm = {
         username: username,
         email: email,
         password: password,

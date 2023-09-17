@@ -1,4 +1,4 @@
-import {StatBookSales} from "../../assets/Interface";
+import {IStatBookSales} from "../../assets/Interface";
 import React, {useEffect, useState} from "react";
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip,} from "chart.js";
 import {Bar} from "react-chartjs-2";
@@ -13,7 +13,7 @@ ChartJS.register(
 );
 
 interface Props {
-    sales_data: StatBookSales[];
+    sales_data: IStatBookSales[];
     max_number: number;
     setTotalNum?: React.Dispatch<React.SetStateAction<number>>
 }

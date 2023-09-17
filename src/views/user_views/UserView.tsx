@@ -1,20 +1,20 @@
 import {
-  Avatar,
-  Button,
-  Col,
-  Collapse,
-  Form,
-  Input,
-  message,
-  Modal,
-  Row,
-  Typography,
-  Upload,
-  UploadFile,
-  UploadProps,
+    Avatar,
+    Button,
+    Col,
+    Collapse,
+    Form,
+    Input,
+    message,
+    Modal,
+    Row,
+    Typography,
+    Upload,
+    UploadFile,
+    UploadProps,
 } from "antd";
 import React, {useEffect, useState} from "react";
-import {CartItem, Msg, User} from "../../assets/Interface";
+import {ICartItem, IMsg, IUser} from "../../assets/Interface";
 import "../../css/UserView.css";
 import {Link, useNavigate} from "react-router-dom";
 import {GetUser, ModUserAvatar, ModUserInfo_USER,} from "../../services/UserService";
@@ -33,8 +33,8 @@ const {Panel} = Collapse;
 export const UserView = () => {
     const [form] = Form.useForm();
     const navigation = useNavigate();
-    const [user, setUser] = useState<User>(EmptyUser);
-    const [cart, setCart] = useState<CartItem[]>([]);
+    const [user, setUser] = useState<IUser>(EmptyUser);
+    const [cart, setCart] = useState<ICartItem[]>([]);
     const [open, setOpen] = useState(false);
     const [fileList, setFileList] = useState<UploadFile[]>([]);
     const [, setUploading] = useState(false);
@@ -132,7 +132,7 @@ export const UserView = () => {
                                     message.error("修改失败", 1);
                                     return;
                                 }
-                                const msg: Msg = await response.json();
+                                const msg: IMsg = await response.json();
                                 if (msg.status !== 0) {
                                     message.error(msg.msg, 1);
                                     return;

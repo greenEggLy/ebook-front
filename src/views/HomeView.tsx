@@ -5,7 +5,7 @@ import {Outlet, useNavigate} from "react-router-dom";
 import "../css/HomeView.css";
 import {ToolFilled} from "@ant-design/icons";
 import {HomeHeader} from "../components/GlobalComponents/HomeHeader";
-import {Navi_, User} from "../assets/Interface";
+import {IUser, Navi_} from "../assets/Interface";
 import {GetUser} from "../services/UserService";
 import {Footer} from "antd/es/layout/layout";
 import {EmptyUser} from "../assets/data/emptyData";
@@ -21,7 +21,7 @@ export const HomeView = () => {
     } = theme.useToken();
     const navigation = useNavigate();
 
-    const [user, setUser] = useState<User>(EmptyUser);
+    const [user, setUser] = useState<IUser>(EmptyUser);
     const [navi, setNavi] = useState<Navi_[]>([]);
     const [collapsed, setCollapsed] = useState<boolean>(false);
 

@@ -1,11 +1,11 @@
 import {apiUrl} from "../utils/global_config";
 import {getRequestInit} from "./Global";
-import {Order, StatBookMoney, StatBookSales, StatUserMoney,} from "../assets/Interface";
+import {IOrder, IStatBookMoney, IStatBookSales, IStatUserMoney,} from "../assets/Interface";
 
 export const StatUserByMoney = async (
     earlier: string,
     later: string
-): Promise<StatUserMoney[]> => {
+): Promise<IStatUserMoney[]> => {
     let url = `${apiUrl}/order/money/user`;
     url += `?earlier=${earlier}&later=${later}`;
     return await fetch(url, getRequestInit())
@@ -16,7 +16,7 @@ export const StatUserByMoney = async (
 export const StatBookBySales = async (
     earlier: string,
     later: string
-): Promise<StatBookSales[]> => {
+): Promise<IStatBookSales[]> => {
     let url = `${apiUrl}/order/sales`;
     url += `?earlier=${earlier}&later=${later}`;
     return await fetch(url, getRequestInit())
@@ -27,7 +27,7 @@ export const StatBookBySales = async (
 export const StatBookByMoney = async (
     earlier: string,
     later: string
-): Promise<StatBookMoney[]> => {
+): Promise<IStatBookMoney[]> => {
     let url = `${apiUrl}/order/money`;
     url += `?earlier=${earlier}&later=${later}`;
     return await fetch(url, getRequestInit())
@@ -39,7 +39,7 @@ export const StatOneBookBySales = async (
     user_id: number,
     earlier: string,
     later: string
-): Promise<StatBookSales[]> => {
+): Promise<IStatBookSales[]> => {
     let url = `${apiUrl}/order/sales/one/${user_id}`;
     url += `?earlier=${earlier}&later=${later}`;
     return await fetch(url, getRequestInit())
@@ -51,7 +51,7 @@ export const StatOneBookByMoney = async (
     user_id: number,
     earlier: string,
     later: string
-): Promise<StatBookMoney[]> => {
+): Promise<IStatBookMoney[]> => {
     let url = `${apiUrl}/order/money/one/${user_id}`;
     url += `?earlier=${earlier}&later=${later}`;
     return await fetch(url, getRequestInit())
@@ -63,7 +63,7 @@ export const StatOneOrdersByTime = async (
     user_id: number,
     earlier: string,
     later: string
-): Promise<Order[]> => {
+): Promise<IOrder[]> => {
     let url = `${apiUrl}/order/time/${user_id}`;
     url += `?earlier=${earlier}&later=${later}`;
     return await fetch(url, getRequestInit())

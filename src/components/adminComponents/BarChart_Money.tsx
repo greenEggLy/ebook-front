@@ -1,9 +1,9 @@
-import {StatBookMoney} from "../../assets/Interface";
+import {IStatBookMoney} from "../../assets/Interface";
 import React, {useEffect, useState} from "react";
 import {Bar} from "react-chartjs-2";
 
 interface Props {
-    money_data: StatBookMoney[];
+    money_data: IStatBookMoney[];
     max_number: number;
     setTotalMoney?: React.Dispatch<React.SetStateAction<number>>
 }
