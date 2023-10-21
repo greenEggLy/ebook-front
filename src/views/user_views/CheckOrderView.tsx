@@ -3,7 +3,7 @@ import {CheckHeaderSteps} from "../../components/userComponents/CheckHeaderSteps
 import {Button, Col, message, Row, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {useLocation, useNavigate} from "react-router-dom";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import "../../css/BuyView.css";
 import {GetCartItems} from "../../services/CartService";
 import {createOrder} from "../../services/OrderService";
@@ -14,8 +14,31 @@ export const CheckOrderView = () => {
     const navigation = useNavigate();
     const cartItem_ids: Set<number> = location.state.goods;
     const user_id = location.state.user_id;
+    const ws = useRef<WebSocket | null>(null);
+    const [wsMsg, setWsMsg] = useState<string>("");
     const [goods, setGoods] = useState<ICartItem[]>([]);
     const [cost, setCost] = useState<number>(0);
+    useLayoutEffect(() => {
+        // alert("useLayoutEffect")
+        ws.current = new WebSocket(`ws://localhost:8080/transfer/${user_id}`);
+        ws.current.onopen = () => {
+            message.info("ws opened");
+        };
+        ws.current.onmessage = (e) => {
+            console.table(e.data)
+            let data = JSON.parse(e.data);
+            message.info(data.goods);
+        };
+        ws.current.onclose = () => {
+            console.log("ws closed");
+        };
+        ws.current.onerror = (e) => {
+            console.log(e);
+        };
+        return () => {
+            ws.current?.close();
+        };
+    }, [ws]);
     useEffect(() => {
         if (!cartItem_ids || !cartItem_ids.size) {
             message.error("请选择购买商品", 1).then(() => navigation("/cart"));
